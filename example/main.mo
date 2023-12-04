@@ -8,9 +8,9 @@ import CertifiedData "mo:base/CertifiedData";
 
 import CertTree "mo:cert/CertTree";
 
-import ICRC7 "mo:icrc7";
-import ICRC30 "mo:icrc30";
-import ICRC3 "mo:icrc3";
+import ICRC7 "mo:icrc7-mo";
+import ICRC30 "mo:icrc30-mo";
+import ICRC3 "mo:icrc3-mo";
 
 
 shared(_init_msg) actor class Example(_args : {
