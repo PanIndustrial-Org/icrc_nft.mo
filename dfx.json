@@ -1,0 +1,22 @@
+{
+    "canisters": {
+ 
+        "icrc7": {
+            "main": "example/main.mo",
+            "type": "motoko",
+            "gzip": true
+        }
+        
+    },
+    "defaults": {
+        "build": {
+            "args": "",
+            "packtool": "mops sources"
+        },
+        "replica": {
+            "subnet_type": "system"
+        }
+    },
+    "dfx": "0.15.1",
+    "version": 1
+}
