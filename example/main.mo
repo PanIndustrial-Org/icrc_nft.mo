@@ -64,7 +64,7 @@ shared(_init_msg) actor class Example(_args : {
         max_take_value = ?10000;
         max_memo_size = ?512;
         permitted_drift = null;
-
+        burn_account = null; //burned nfts are deleted
         deployer = init_msg.caller;
       } : ICRC7.InitArgs;
     };
@@ -111,6 +111,7 @@ shared(_init_msg) actor class Example(_args : {
           maxRecordsToArchive = 10_000;
           archiveCycles = 2_000_000_000_000; //two trillion
           archiveControllers = null;
+          
         }
     };
     case(?val) _args.icrc3_args;

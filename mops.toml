@@ -1,6 +1,6 @@
 [package]
-name = "icrc_nft-mo"
-version = "0.1.0"
+name = "icrc-nft-mo"
+version = "0.1.1"
 description = "icrc based nft example for motoko"
 repository = "https://github.com/PanIndustrial-Org/icrc_nft.mo"
 keywords = [ "nft" ]
@@ -19,8 +19,8 @@ cert = "https://github.com/nomeata/ic-certification#v0.1.3@c403ffec0a60f658a1009
 vector = "0.2.0"
 rep-indy-hash = "0.1.1"
 icrc3-mo = "0.1.0"
-icrc30-mo = "0.1.0"
-icrc7-mo = "0.1.0"
+icrc30-mo = "0.2.0"
+icrc7-mo = "0.2.1"
 
 [dev-dependencies]
 test = "1.1.1"
