@@ -20,7 +20,7 @@ vector = "0.2.0"
 rep-indy-hash = "0.1.1"
 icrc3-mo = "0.1.0"
 icrc30-mo = "0.2.0"
-icrc7-mo = "0.2.1"
+icrc7-mo = "https://github.com/letmejustputthishere/icrc7.mo#fix/token-owner@7428e613584305d0f52f7270eb29dc1897499be7"
 
 [dev-dependencies]
 test = "1.1.1"

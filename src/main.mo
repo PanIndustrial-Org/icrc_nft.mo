@@ -18,7 +18,7 @@ shared (_init_msg) actor class Example(
     icrc30_args : ?ICRC30.InitArgs;
     icrc3_args : ?ICRC3.InitArgs;
   }
-) : async ICRC7.Service = this {
+) : async (ICRC7.Service and ICRC30.Service) = this {
 
   type Account = ICRC7.Account;
   type Environment = ICRC7.Environment;
@@ -375,12 +375,10 @@ shared (_init_msg) actor class Example(
     Vec.add(results, ("icrc7:max_take_value", #Nat(ledger_info.max_take_value)));
     Vec.add(results, ("icrc30:max_revoke_approvals", #Nat(ledger_info30.max_revoke_approvals)));
 
-    return {
-      metadata = Vec.toArray(results);
-    };
+    Vec.toArray(results);
   };
 
-  public query func icrc30_metadata() : async { metadata : [(Text, Value)] } {
+  public query func icrc30_metadata() : async [(Text, Value)] {
 
     let ledger_info30 = icrc30().get_ledger_info();
     let results = Vec.new<(Text, Value)>();
@@ -389,9 +387,7 @@ shared (_init_msg) actor class Example(
 
     Vec.add(results, ("icrc7:name", #Nat(ledger_info30.max_revoke_approvals)));
 
-    return {
-      metadata = Vec.toArray(results);
-    };
+    return Vec.toArray(results);
   };
 
   public query func icrc7_token_metadata(token_ids : [Nat]) : async [(Nat, ?NFTMap)] {
