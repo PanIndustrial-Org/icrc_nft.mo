@@ -11,7 +11,6 @@ import CertTree "mo:cert/CertTree";
 import ICRC7 "mo:icrc7.mo";
 import ICRC30 "mo:icrc30.mo";
 import ICRC3 "mo:icrc3.mo";
-import ICRC3Service "mo:icrc3.mo/service";
 
 shared (_init_msg) actor class Example(
   _args : {
@@ -280,7 +279,9 @@ shared (_init_msg) actor class Example(
     Time.now();
   };
 
-  // query calls
+  /////////
+  // ICRC7 endpoints
+  /////////
 
   public query func icrc7_symbol() : async Text {
     icrc7().symbol();
@@ -357,100 +358,56 @@ shared (_init_msg) actor class Example(
     icrc7().collection_metadata();
   };
 
-  public query func icrc30_metadata() : async [(Text, Value)] {
+  public shared (msg) func icrc7_transfer(args : TransferArgs) : async TransferResponse {
+    icrc7().transfer(msg.caller, args);
+  };
 
-    let ledger_info30 = icrc30().get_ledger_info();
-    let results = Vec.new<(Text, Value)>();
+  /////////
+  // ICRC30 endpoints
+  /////////
 
-    Vec.add(results, ("max_approvals_per_token_or_collection", #Nat(ledger_info30.max_approvals_per_token_or_collection)));
-
-    Vec.add(results, ("icrc7:name", #Nat(ledger_info30.max_revoke_approvals)));
-
-    return Vec.toArray(results);
+  public query func icrc30_metadata() : async [(Text, Value)] { 
+    icrc30().metadata();
   };
 
   public query func icrc30_max_approvals_per_token_or_collection() : async ?Nat {
-    return ?icrc30().get_ledger_info().max_approvals_per_token_or_collection;
+    icrc30().max_approvals_per_token_or_collection();
   };
 
   public query func icrc30_max_revoke_approvals() : async ?Nat {
-    return ?icrc30().get_ledger_info().max_revoke_approvals;
+    return icrc30().max_revoke_approvals();
   };
 
   public query func icrc30_is_approved(spender : Account, from_subaccount : ?Blob, token_id : Nat) : async Bool {
     return icrc30().is_approved(spender, from_subaccount, token_id);
   };
 
-  public query func icrc30_get_approvals(token_ids : [Nat], prev : ?TokenApproval, take : ?Nat) : async [TokenApproval] {
-
-    switch (icrc30().get_token_approvals(token_ids, prev, take)) {
-      case (#ok(val)) val;
-      case (#err(err)) D.trap(err);
-    };
+  public query func icrc30_get_token_approvals(token_ids : [Nat], prev : ?TokenApproval, take : ?Nat) : async [TokenApproval] {
+    icrc30().get_token_approvals(token_ids, prev, take);
   };
 
   public query func icrc30_get_collection_approvals(owner : Account, prev : ?CollectionApproval, take : ?Nat) : async [CollectionApproval] {
-
-    switch (icrc30().get_collection_approvals(owner, prev, take)) {
-      case (#ok(val)) val;
-      case (#err(err)) D.trap(err);
-    };
-  };
-
-  //Update calls
-
-  public shared (msg) func icrc30_approve(token_ids : [Nat], approval : ApprovalInfo) : async ApprovalResponse {
-
-    switch (icrc30().approve_transfers(msg.caller, token_ids, approval)) {
-      case (#ok(val)) val;
-      case (#err(err)) D.trap(err);
-    };
-  };
-
-  public shared (msg) func icrc30_approve_collection(approval : ApprovalInfo) : async ApprovalCollectionResponse {
-
-    let result : ApprovalResult = switch (icrc30().approve_collection(msg.caller, approval)) {
-      case (#ok(val)) val;
-      case (#err(err)) D.trap(err);
-    };
-
-    switch (result) {
-      case (#Err(val)) {
-        return (#Err(icrc30().TokenErrorToCollectionError(val)));
-      };
-      case (#Ok(val)) {
-        return #Ok(val);
-      };
-    };
-  };
-
-  public shared (msg) func icrc7_transfer(args : TransferArgs) : async TransferResponse {
-    switch (icrc7().transfer(msg.caller, args)) {
-      case (#ok(val)) val;
-      case (#err(err)) D.trap(err);
-    };
+    icrc30().get_collection_approvals(owner, prev, take);
   };
 
   public shared (msg) func icrc30_transfer_from(args : TransferFromArgs) : async TransferFromResponse {
-    switch (icrc30().transfer_from(msg.caller, args)) {
-      case (#ok(val)) val;
-      case (#err(err)) D.trap(err);
-    };
+    icrc30().transfer_from(msg.caller, args);
+  };
+
+  public shared (msg) func icrc30_approve_tokens(token_ids : [Nat], approval : ApprovalInfo) : async ApprovalResponse {
+    icrc30().approve_tokens(msg.caller, token_ids, approval);
+  };
+
+  public shared (msg) func icrc30_approve_collection(approval : ApprovalInfo) : async ApprovalCollectionResponse {
+    icrc30().approve_collection(msg.caller, approval);
   };
 
   public shared (msg) func icrc30_revoke_token_approvals(args : RevokeTokensArgs) : async RevokeTokensResponse {
-    switch (icrc30().revoke_token_approvals(msg.caller, args)) {
-      case (#ok(val)) val;
-      case (#err(err)) D.trap(err);
-    };
+    icrc30().revoke_token_approvals(msg.caller, args);
   };
 
   public shared (msg) func icrc30_revoke_collection_approvals(args : RevokeCollectionArgs) : async RevokeCollectionResponse {
-
-    switch (icrc30().revoke_collection_approvals(msg.caller, args)) {
-      case (#ok(val)) val;
-      case (#err(err)) D.trap(err);
-    };
+    icrc30().revoke_collection_approvals(msg.caller, args);
   };
 
   /////////

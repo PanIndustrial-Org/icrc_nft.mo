@@ -19,8 +19,9 @@ cert = "https://github.com/nomeata/ic-certification#v0.1.3@c403ffec0a60f658a1009
 vector = "0.2.0"
 rep-indy-hash = "0.1.1"
 "icrc3.mo" = "https://github.com/letmejustputthishere/icrc3.mo#fix/get-blocks@c0bcaf8272c1904ea3d4323387c17160f74026db"
-"icrc30.mo" = "https://github.com/letmejustputthishere/icrc30.mo#mops-dependency@1dc063767d61ffed3025f05cb39a0404d403d3bc"
+# "icrc30.mo" = "https://github.com/letmejustputthishere/icrc30.mo#0cc090bd9c9f0b1c861d150b1ef0ccbcf5669a1a@0cc090bd9c9f0b1c861d150b1ef0ccbcf5669a1a"
 "icrc7.mo" = "https://github.com/PanIndustrial-Org/icrc7.mo#master@c5346c5e9b42b96b1c0aa6d0d9bc0211a5c178c0"
+"icrc30.mo" = "../icrc30.mo"
 
 [dev-dependencies]
 test = "1.1.1"
