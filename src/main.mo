@@ -78,6 +78,7 @@ shared (_init_msg) actor class Example(
     init_msg.caller,
   );
 
+  // TO-DO : this will trap if the pattern doesn't match after an upgrade, is this intended?
   let #v0_1_0(#data(icrc7_state_current)) = icrc7_migration_state;
 
   stable var icrc30_migration_state = ICRC30.init(
@@ -99,6 +100,7 @@ shared (_init_msg) actor class Example(
     init_msg.caller,
   );
 
+  // TO-DO : this will trap if the pattern doesn't match after an upgrade, is this intended?
   let #v0_1_0(#data(icrc30_state_current)) = icrc30_migration_state;
 
   private var _icrc7 : ?ICRC7.ICRC7 = null;
@@ -134,6 +136,7 @@ shared (_init_msg) actor class Example(
     init_msg.caller,
   );
 
+  // TO-DO : this will trap if the pattern doesn't match after an upgrade, is this intended?
   let #v0_1_0(#data(icrc3_state_current)) = icrc3_migration_state;
 
   private var _icrc3 : ?ICRC3.ICRC3 = null;
@@ -491,7 +494,7 @@ shared (_init_msg) actor class Example(
     if (msg.caller != icrc7().get_state().owner) D.trap("Unauthorized");
 
     switch (
-      icrc7().transfer(
+      icrc7().transfer_tokens(
         Principal.fromActor(this),
         {
           subaccount = null;
