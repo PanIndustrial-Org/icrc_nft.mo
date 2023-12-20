@@ -50,6 +50,8 @@ shared (_init_msg) actor class Example(
 
   // use this to create the initial state of your canister
   // the args will be considered
+  
+  /// Initialize ICRC7
   stable var icrc7_migration_state = ICRC7.init(
     ICRC7.initialState(),
     #v0_1_0(#id),
@@ -81,6 +83,37 @@ shared (_init_msg) actor class Example(
   // TO-DO : this will trap if the pattern doesn't match after an upgrade, is this intended?
   let #v0_1_0(#data(icrc7_state_current)) = icrc7_migration_state;
 
+  private func get_icrc7_state() : ICRC7.CurrentState {
+    return icrc7_state_current;
+  };
+
+  private var _icrc7 : ?ICRC7.ICRC7 = null;
+
+  func icrc7() : ICRC7.ICRC7 {
+    switch (_icrc7) {
+      case (null) {
+        let initclass : ICRC7.ICRC7 = ICRC7.ICRC7(?icrc7_migration_state, Principal.fromActor(this), get_icrc7_environment());
+        _icrc7 := ?initclass;
+        initclass;
+      };
+      case (?val) val;
+    };
+  };
+
+  private func get_icrc7_environment() : ICRC7.Environment {
+    {
+      canister = get_canister;
+      get_time = get_time;
+      refresh_state = get_icrc7_state;
+      add_ledger_transaction = ?icrc3().add_record;
+      can_mint = null;
+      can_burn = null;
+      can_transfer = null;
+    };
+  };
+
+
+  /// Initialize ICRC30
   stable var icrc30_migration_state = ICRC30.init(
     ICRC30.initialState(),
     #v0_1_0(#id),
@@ -103,17 +136,39 @@ shared (_init_msg) actor class Example(
   // TO-DO : this will trap if the pattern doesn't match after an upgrade, is this intended?
   let #v0_1_0(#data(icrc30_state_current)) = icrc30_migration_state;
 
-  private var _icrc7 : ?ICRC7.ICRC7 = null;
-  private var _icrc30 : ?ICRC30.ICRC30 = null;
-
-  private func get_icrc7_state() : ICRC7.CurrentState {
-    return icrc7_state_current;
-  };
-
   private func get_icrc30_state() : ICRC30.CurrentState {
     return icrc30_state_current;
   };
 
+  private var _icrc30 : ?ICRC30.ICRC30 = null;
+
+  func icrc30() : ICRC30.ICRC30 {
+    switch (_icrc30) {
+      case (null) {
+        let initclass : ICRC30.ICRC30 = ICRC30.ICRC30(?icrc30_migration_state, Principal.fromActor(this), get_icrc30_environment());
+        _icrc30 := ?initclass;
+        initclass;
+      };
+      case (?val) val;
+    };
+  };
+
+  private func get_icrc30_environment() : ICRC30.Environment {
+    {
+      canister = get_canister;
+      get_time = get_time;
+      refresh_state = get_icrc30_state;
+      icrc7 = icrc7();
+      can_transfer_from = null;
+      can_approve_token = null;
+      can_approve_collection = null;
+      can_revoke_token_approval = null;
+      can_revoke_collection_approval = null;
+    };
+  };
+
+
+  /// Initialize ICRC3
   stable var icrc3_migration_state = ICRC3.init(
     ICRC3.initialState(),
     #v0_1_0(#id),
@@ -139,12 +194,23 @@ shared (_init_msg) actor class Example(
   // TO-DO : this will trap if the pattern doesn't match after an upgrade, is this intended?
   let #v0_1_0(#data(icrc3_state_current)) = icrc3_migration_state;
 
-  private var _icrc3 : ?ICRC3.ICRC3 = null;
-
   private func get_icrc3_state() : ICRC3.CurrentState {
     return icrc3_state_current;
   };
 
+  private var _icrc3 : ?ICRC3.ICRC3 = null;
+
+  func icrc3() : ICRC3.ICRC3 {
+    switch (_icrc3) {
+      case (null) {
+        let initclass : ICRC3.ICRC3 = ICRC3.ICRC3(?icrc3_migration_state, Principal.fromActor(this), get_icrc3_environment());
+        _icrc3 := ?initclass;
+        initclass;
+      };
+      case (?val) val;
+    };
+  };
+  
   stable let cert_store : CertTree.Store = CertTree.newStore();
   let ct = CertTree.Ops(cert_store);
 
@@ -165,65 +231,6 @@ shared (_init_msg) actor class Example(
     ?{
       updated_certification = ?updated_certification;
       get_certificate_store = ?get_certificate_store;
-    };
-  };
-
-  func icrc3() : ICRC3.ICRC3 {
-    switch (_icrc3) {
-      case (null) {
-        let initclass : ICRC3.ICRC3 = ICRC3.ICRC3(?icrc3_migration_state, Principal.fromActor(this), get_icrc3_environment());
-        _icrc3 := ?initclass;
-        initclass;
-      };
-      case (?val) val;
-    };
-  };
-
-  private func get_icrc7_environment() : ICRC7.Environment {
-    {
-      canister = get_canister;
-      get_time = get_time;
-      refresh_state = get_icrc7_state;
-      add_ledger_transaction = ?icrc3().add_record;
-      can_mint = null;
-      can_burn = null;
-      can_transfer = null;
-    };
-  };
-
-  private func get_icrc30_environment() : ICRC30.Environment {
-    {
-      canister = get_canister;
-      get_time = get_time;
-      refresh_state = get_icrc30_state;
-      icrc7 = icrc7();
-      can_transfer_from = null;
-      can_approve_token = null;
-      can_approve_collection = null;
-      can_revoke_token_approval = null;
-      can_revoke_collection_approval = null;
-    };
-  };
-
-  func icrc7() : ICRC7.ICRC7 {
-    switch (_icrc7) {
-      case (null) {
-        let initclass : ICRC7.ICRC7 = ICRC7.ICRC7(?icrc7_migration_state, Principal.fromActor(this), get_icrc7_environment());
-        _icrc7 := ?initclass;
-        initclass;
-      };
-      case (?val) val;
-    };
-  };
-
-  func icrc30() : ICRC30.ICRC30 {
-    switch (_icrc30) {
-      case (null) {
-        let initclass : ICRC30.ICRC30 = ICRC30.ICRC30(?icrc30_migration_state, Principal.fromActor(this), get_icrc30_environment());
-        _icrc30 := ?initclass;
-        initclass;
-      };
-      case (?val) val;
     };
   };
 
