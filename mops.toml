@@ -18,9 +18,9 @@ stable-write-only = "https://github.com/skilesare/StableWriteOnly.mo#v0.1.0@02e9
 cert = "https://github.com/nomeata/ic-certification#v0.1.3@c403ffec0a60f658a1009976c785aa567ff0da77"
 vector = "0.2.0"
 rep-indy-hash = "0.1.1"
-icrc3-mo = "0.2.0"
-icrc30-mo = "0.2.0"
-icrc7-mo = "0.2.1"
+icrc3-mo = "0.2.2"
+icrc30-mo = "0.3.1"
+icrc7-mo = "0.3.1"
 
 [dev-dependencies]
 test = "1.1.1"

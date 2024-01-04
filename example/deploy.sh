@@ -185,7 +185,7 @@ dfx canister call icrc7 icrc30_revoke_token_approvals "(record {
 dfx canister call icrc7 icrc30_get_approvals "(vec { 0;},null,null)" --query
 
 #Get the transaction log
-dfx canister call icrc7 icrc3_get_blocks "(record {start =0; length = 1000})" --query
+dfx canister call icrc7 icrc3_get_blocks "(vec {record {start =0; length = 1000}})" --query
 
 #Get the archive log
 dfx canister call icrc7 icrc3_get_archives "(record {from = null})" --query

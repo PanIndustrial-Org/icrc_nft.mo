@@ -45,8 +45,6 @@ shared(_init_msg) actor class Example(_args : {
   type RevokeTokensResponse =             ICRC30.RevokeTokensResponse;
   type RevokeCollectionResponse =         ICRC30.RevokeCollectionResponse;
 
-  
-
   stable var init_msg = _init_msg; //preserves original initialization;
 
   stable var icrc7_migration_state = ICRC7.init(ICRC7.initialState() , #v0_1_0(#id), switch(_args.icrc7_args){
@@ -66,6 +64,7 @@ shared(_init_msg) actor class Example(_args : {
         permitted_drift = null;
         burn_account = null; //burned nfts are deleted
         deployer = init_msg.caller;
+        supported_standards = null;
       } : ICRC7.InitArgs;
     };
     case(?val) val;
@@ -386,12 +385,8 @@ shared(_init_msg) actor class Example(_args : {
     };
   };
 
-  public query func icrc7_token_metadata(token_ids: [Nat]) : async [(Nat, ?NFTMap)]{
- 
-     switch(icrc7().get_token_infos_shared(token_ids)){
-        case(#ok(val)) val;
-        case(#err(err)) D.trap(err);
-      };
+  public query func icrc7_token_metadata(token_ids: [Nat]) : async [{token_id:Nat; metadata: [(Text, Value)]}]{
+     return icrc7().token_metadata(token_ids);
   };
 
   public query func icrc7_owner_of(token_ids: [Nat]) : async OwnerOfResponses {
@@ -420,18 +415,12 @@ shared(_init_msg) actor class Example(_args : {
 
   public query func icrc30_get_approvals(token_ids: [Nat], prev: ?TokenApproval, take: ?Nat) : async [TokenApproval] {
     
-    switch(icrc30().get_token_approvals(token_ids, prev, take)){
-        case(#ok(val)) val;
-        case(#err(err)) D.trap(err);
-      };
+    return icrc30().get_token_approvals(token_ids, prev, take);
   };
 
   public query func icrc30_get_collection_approvals(owner : Account, prev: ?CollectionApproval, take: ?Nat) : async [CollectionApproval] {
     
-    switch(icrc30().get_collection_approvals(owner, prev, take)){
-        case(#ok(val)) val;
-        case(#err(err)) D.trap(err);
-      };
+    return icrc30().get_collection_approvals(owner, prev, take);
   };
 
   public query func icrc7_supported_standards() : async ICRC7.SupportedStandards {
@@ -453,49 +442,23 @@ shared(_init_msg) actor class Example(_args : {
   };
 
   public shared(msg) func icrc30_approve_collection(approval: ApprovalInfo) : async ApprovalCollectionResponse {
-
-      let result : ApprovalResult = switch(icrc30().approve_collection( msg.caller, approval)){
-        case(#ok(val)) val;
-        case(#err(err)) D.trap(err);
-      };
-
-      switch(result){
-        case(#Err(val)){
-          return (#Err(icrc30().TokenErrorToCollectionError(val)));
-        };
-        case(#Ok(val)){
-          return #Ok(val);
-        };
-      };
+      icrc30().approve_collection( msg.caller, approval);
   };
 
   public shared(msg) func icrc7_transfer(args: TransferArgs) : async TransferResponse {
-      switch(icrc7().transfer(msg.caller, args)){
-        case(#ok(val)) val;
-        case(#err(err)) D.trap(err);
-      };
+      icrc7().transfer(msg.caller, args);
   };
 
   public shared(msg) func icrc30_transfer_from(args: TransferFromArgs) : async TransferFromResponse {
-      switch(icrc30().transfer_from(msg.caller, args)){
-        case(#ok(val)) val;
-        case(#err(err)) D.trap(err);
-      };
+      icrc30().transfer_from(msg.caller, args)
   };
 
   public shared(msg) func icrc30_revoke_token_approvals(args: RevokeTokensArgs) : async RevokeTokensResponse {
-      switch(icrc30().revoke_token_approvals(msg.caller, args)){
-        case(#ok(val)) val;
-        case(#err(err)) D.trap(err);
-      };
+      icrc30().revoke_token_approvals(msg.caller, args);
   };
 
   public shared(msg) func icrc30_revoke_collection_approvals(args: RevokeCollectionArgs) : async RevokeCollectionResponse {
-     
-      switch(icrc30().revoke_collection_approvals(msg.caller, args)){
-        case(#ok(val)) val;
-        case(#err(err)) D.trap(err);
-      };
+      icrc30().revoke_collection_approvals(msg.caller, args);
   };
 
   /////////
@@ -503,7 +466,7 @@ shared(_init_msg) actor class Example(_args : {
   /////////
 
   public query func icrc3_get_blocks(args: [ICRC3.TransactionRange]) : async ICRC3.GetTransactionsResult{
-    return icrc3().get_transactions(args);
+    return icrc3().get_blocks(args);
   };
 
   public query func icrc3_get_archives(args: ICRC3.GetArchivesArgs) : async ICRC3.GetArchivesResult{
@@ -571,7 +534,7 @@ shared(_init_msg) actor class Example(_args : {
   public shared(msg) func assign(token_id : Nat, account : Account) : async Nat {
     if(msg.caller != icrc7().get_state().owner) D.trap("Unauthorized");
 
-    switch(icrc7().transfer(Principal.fromActor(this), {
+    switch(icrc7().transfer_tokens(Principal.fromActor(this), {
       subaccount = null;
       to = account;
       token_ids = [token_id];
