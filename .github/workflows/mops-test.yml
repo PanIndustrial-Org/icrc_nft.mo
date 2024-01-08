@@ -1,0 +1,25 @@
+name: mops test
+
+on:
+  pull_request:
+    types: [synchronize, opened, reopened, ready_for_review, unlabeled]
+
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: install mops
+        run: npm i ic-mops -g
+
+      - name: install mops packages
+        run: mops install
+
+      - name: run tests
+        run: mops test

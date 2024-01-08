@@ -1,0 +1,38 @@
+name: mops test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Setup dfx environment
+        uses: aviate-labs/setup-dfx@v0.2.6
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: install mops
+        run: npm i ic-mops -g
+
+      - name: install mops packages
+        run: mops install
+
+      - name: build canister
+        run: dfx build
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: icrc_nft.wasm.gz
+          path: .dfx/canisters/icrc7.wasm.gz
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: icrc_nft.did
+          path: .dfx/canisters/icrc7.did
+
