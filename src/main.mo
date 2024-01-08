@@ -8,9 +8,9 @@ import CertifiedData "mo:base/CertifiedData";
 
 import CertTree "mo:cert/CertTree";
 
-import ICRC7 "mo:icrc7.mo";
-import ICRC30 "mo:icrc30.mo";
-import ICRC3 "mo:icrc3.mo";
+import ICRC7 "mo:icrc7-mo";
+import ICRC30 "mo:icrc30-mo";
+import ICRC3 "mo:icrc3-mo";
 
 shared (_init_msg) actor class Example(
   _args : {
@@ -50,7 +50,7 @@ shared (_init_msg) actor class Example(
 
   // use this to create the initial state of your canister
   // the args will be considered
-  
+
   /// Initialize ICRC7
   stable var icrc7_migration_state = ICRC7.init(
     ICRC7.initialState(),
@@ -112,7 +112,6 @@ shared (_init_msg) actor class Example(
     };
   };
 
-
   /// Initialize ICRC30
   stable var icrc30_migration_state = ICRC30.init(
     ICRC30.initialState(),
@@ -167,7 +166,6 @@ shared (_init_msg) actor class Example(
     };
   };
 
-
   /// Initialize ICRC3
   stable var icrc3_migration_state = ICRC3.init(
     ICRC3.initialState(),
@@ -210,7 +208,7 @@ shared (_init_msg) actor class Example(
       case (?val) val;
     };
   };
-  
+
   stable let cert_store : CertTree.Store = CertTree.newStore();
   let ct = CertTree.Ops(cert_store);
 
@@ -232,34 +230,6 @@ shared (_init_msg) actor class Example(
       updated_certification = ?updated_certification;
       get_certificate_store = ?get_certificate_store;
     };
-  };
-
-  //we will use a stable log for this example, but encourage the use of ICRC3 in a full implementation.  see https://github.com/panindustrial/FullNFT.mo
-
-  stable var trx_log = Vec.new<ICRC7.Value>();
-
-  func add_trx(entry : Value, entrytop : ?Value) : Nat {
-    let trx = Vec.new<(Text, Value)>();
-
-    Vec.add(trx, ("tx", entry));
-
-    switch (entrytop) {
-      case (?top_level) {
-        switch (top_level) {
-          case (#Map(items)) {
-            for (thisItem in items.vals()) {
-              Vec.add(trx, (thisItem.0, thisItem.1));
-            };
-          };
-          case (_) {};
-        };
-      };
-      case (null) {};
-    };
-
-    let thisTrx = #Map(Vec.toArray(trx));
-    Vec.add(trx_log, thisTrx);
-    return (Vec.size(trx_log) - 1);
   };
 
   private var canister_principal : ?Principal = null;
@@ -376,7 +346,7 @@ shared (_init_msg) actor class Example(
   // ICRC30 endpoints
   /////////
 
-  public query func icrc30_metadata() : async [(Text, Value)] { 
+  public query func icrc30_metadata() : async [(Text, Value)] {
     icrc30().metadata();
   };
 
