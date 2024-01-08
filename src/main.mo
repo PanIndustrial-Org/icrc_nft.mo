@@ -14,9 +14,9 @@ import ICRC3 "mo:icrc3-mo";
 
 shared (_init_msg) actor class Example(
   _args : {
-    icrc7_args : ?ICRC7.InitArgs;
-    icrc30_args : ?ICRC30.InitArgs;
-    icrc3_args : ?ICRC3.InitArgs;
+    icrc7_args : ICRC7.InitArgs;
+    icrc30_args : ICRC30.InitArgs;
+    icrc3_args : ICRC3.InitArgs;
   }
 ) : async (ICRC7.Service and ICRC3.Service and ICRC30.Service) = this {
 
@@ -24,23 +24,17 @@ shared (_init_msg) actor class Example(
   type Environment = ICRC7.Environment;
   type Value = ICRC7.Value;
   type NFT = ICRC7.NFT;
-  type NFTShared = ICRC7.NFTShared;
   type NFTMap = ICRC7.NFTMap;
-  type OwnerOfResponse = ICRC7.OwnerOfResponse;
   type OwnerOfResponses = ICRC7.OwnerOfResponses;
   type TransferArgs = ICRC7.TransferArgs;
   type TransferResponse = ICRC7.TransferResponse;
-  type TransferError = ICRC7.TransferArgs;
   type TokenApproval = ICRC30.TokenApproval;
   type CollectionApproval = ICRC30.CollectionApproval;
   type ApprovalInfo = ICRC30.ApprovalInfo;
   type ApprovalResponse = ICRC30.ApprovalResponse;
-  type ApprovalResult = ICRC30.ApprovalResult;
   type ApprovalCollectionResponse = ICRC30.ApprovalCollectionResponse;
   type RevokeTokensArgs = ICRC30.RevokeTokensArgs;
-  type RevokeTokensResponseItem = ICRC30.RevokeTokensResponseItem;
   type RevokeCollectionArgs = ICRC30.RevokeCollectionArgs;
-  type RevokeCollectionResponseItem = ICRC30.RevokeCollectionResponseItem;
   type TransferFromArgs = ICRC30.TransferFromArgs;
   type TransferFromResponse = ICRC30.TransferFromResponse;
   type RevokeTokensResponse = ICRC30.RevokeTokensResponse;
@@ -55,28 +49,7 @@ shared (_init_msg) actor class Example(
   stable var icrc7_migration_state = ICRC7.init(
     ICRC7.initialState(),
     #v0_1_0(#id),
-    switch (_args.icrc7_args) {
-      case (null) {
-        ?{
-          symbol = ?"NBL";
-          name = ?"NASA Nebulas";
-          description = ?"A Collection of Nebulas Captured by NASA";
-          logo = ?"https://www.nasa.gov/wp-content/themes/nasa/assets/images/nasa-logo.svg";
-          supply_cap = null;
-          allow_transfers = null;
-          max_query_batch_size = ?100;
-          max_update_batch_size = ?100;
-          default_take_value = ?1000;
-          max_take_value = ?10000;
-          max_memo_size = ?512;
-          permitted_drift = null;
-          burn_account = null; //burned nfts are deleted
-          deployer = init_msg.caller;
-          supported_standards = null;
-        } : ICRC7.InitArgs;
-      };
-      case (?val) val;
-    },
+    _args.icrc7_args,
     init_msg.caller,
   );
 
@@ -116,19 +89,7 @@ shared (_init_msg) actor class Example(
   stable var icrc30_migration_state = ICRC30.init(
     ICRC30.initialState(),
     #v0_1_0(#id),
-    switch (_args.icrc30_args) {
-      case (null) {
-        ?{
-          max_approvals_per_token_or_collection = ?10;
-          max_revoke_approvals = ?100;
-          collection_approval_requires_token = ?true;
-          max_approvals = null;
-          settle_to_approvals = null;
-          deployer = init_msg.caller;
-        } : ICRC30.InitArgs;
-      };
-      case (?val) val;
-    },
+    _args.icrc30_args,
     init_msg.caller,
   );
 
@@ -170,22 +131,7 @@ shared (_init_msg) actor class Example(
   stable var icrc3_migration_state = ICRC3.init(
     ICRC3.initialState(),
     #v0_1_0(#id),
-    switch (_args.icrc3_args) {
-      case (null) {
-        ?{
-          maxActiveRecords = 4000;
-          settleToRecords = 2000;
-          maxRecordsInArchiveInstance = 5_000_000;
-          maxArchivePages = 62500; //allows up to 993 bytes per record
-          archiveIndexType = #Stable;
-          maxRecordsToArchive = 10_000;
-          archiveCycles = 2_000_000_000_000; //two trillion
-          archiveControllers = null;
-
-        };
-      };
-      case (?val) _args.icrc3_args;
-    },
+    ?_args.icrc3_args,
     init_msg.caller,
   );
 
