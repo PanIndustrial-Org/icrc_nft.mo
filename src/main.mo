@@ -16,7 +16,7 @@ shared (_init_msg) actor class Example(
   _args : {
     icrc7_args : ICRC7.InitArgs;
     icrc30_args : ICRC30.InitArgs;
-    icrc3_args : ICRC3.InitArgs;
+    icrc3_args : ?ICRC3.InitArgs;
   }
 ) : async (ICRC7.Service and ICRC3.Service and ICRC30.Service) = this {
 
@@ -131,7 +131,7 @@ shared (_init_msg) actor class Example(
   stable var icrc3_migration_state = ICRC3.init(
     ICRC3.initialState(),
     #v0_1_0(#id),
-    ?_args.icrc3_args,
+    _args.icrc3_args,
     init_msg.caller,
   );
 
@@ -164,7 +164,6 @@ shared (_init_msg) actor class Example(
   };
 
   private func updated_certification(cert : Blob, lastIndex : Nat) : Bool {
-
     D.print("updating the certification " # debug_show (CertifiedData.getCertificate(), ct.treeHash()));
     ct.setCertifiedData();
     D.print("did the certification " # debug_show (CertifiedData.getCertificate()));
@@ -361,85 +360,17 @@ shared (_init_msg) actor class Example(
   // one might deploy an NFT.
   /////////
 
-  public shared (msg) func icrcX_mint(tokens : ICRC7.SetNFTRequest) : async ICRC7.SetNFTBatchResponse {
-
+  public shared (msg) func mint(tokens : ICRC7.SetNFTRequest) : async ICRC7.SetNFTBatchResponse {
     switch (icrc7().set_nfts(msg.caller, tokens)) {
       case (#ok(val)) val;
       case (#err(err)) D.trap(err);
     };
   };
 
-  public shared (msg) func icrcX_burn(tokens : ICRC7.BurnNFTRequest) : async ICRC7.BurnNFTBatchResponse {
+  public shared (msg) func burn(tokens : ICRC7.BurnNFTRequest) : async ICRC7.BurnNFTBatchResponse {
     switch (icrc7().burn_nfts(msg.caller, tokens)) {
       case (#ok(val)) val;
       case (#err(err)) D.trap(err);
-    };
-  };
-
-  private stable var _init = false;
-  public shared (msg) func init() : async () {
-    //can only be called once
-
-    //Warning:  This is a test scenario and should not be used in production.  This creates an approval for the owner of the canister and this can be garbage collected if the max_approvals is hit.  We advise minting with the target owner in the metadata or creating an assign function (see assign)
-    if (_init == false) {
-      //approve the deployer as a spender on all tokens...
-      let current_val = icrc30().get_state().ledger_info.collection_approval_requires_token;
-      let update = icrc30().update_ledger_info([#CollectionApprovalRequiresToken(false)]);
-      let result = icrc30().approve_collection(
-        Principal.fromActor(this),
-        {
-          from_subaccount = null;
-          spender = { owner = icrc7().get_state().owner; subaccount = null };
-          memo = null;
-          expires_at = null;
-          created_at_time = null;
-        },
-      );
-      let update2 = icrc30().update_ledger_info([#CollectionApprovalRequiresToken(current_val)]);
-
-      D.print(
-        "initialized" # debug_show (
-          result,
-          {
-            from_subaccount = null;
-            spender = { owner = icrc7().get_state().owner; subaccount = null };
-            memo = null;
-            expires_at = null;
-            created_at_time = null;
-          },
-        )
-      );
-    };
-    _init := true;
-  };
-
-  public shared (msg) func assign(token_id : Nat, account : Account) : async Nat {
-    if (msg.caller != icrc7().get_state().owner) D.trap("Unauthorized");
-
-    switch (
-      icrc7().transfer_tokens(
-        Principal.fromActor(this),
-        {
-          subaccount = null;
-          to = account;
-          token_ids = [token_id];
-          memo = null;
-          created_at_time = null;
-        },
-      )
-    ) {
-      case (#ok(#Ok(val))) {
-        switch (val[0].transfer_result) {
-          case (#Ok(val)) val;
-          case (#Err(err)) D.trap(debug_show (err));
-        };
-      };
-      case (#err(err)) {
-        D.trap(err);
-      };
-      case (#ok(#Err(err))) {
-        D.trap(debug_show (err));
-      };
     };
   };
 
