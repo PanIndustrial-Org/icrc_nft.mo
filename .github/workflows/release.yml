@@ -6,6 +6,8 @@ on:
     types: [created]
 
 jobs:
+  call_build:
+    uses: ./.github/workflows/build.yml
   test:
     runs-on: ubuntu-22.04
 

@@ -1,12 +1,13 @@
 name: build
 
 on:
+  workflow_call:
   workflow_dispatch:
   pull_request:
     types: [synchronize, opened, reopened, ready_for_review, unlabeled]
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-22.04
 
     steps:
@@ -36,9 +37,9 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: icrc_nft.wasm.gz
-          path: .dfx/canisters/icrc7.wasm.gz
+          path: .dfx/canisters/icrc_nft/icrc_nft.wasm.gz
 
       - uses: actions/upload-artifact@v2
         with:
           name: icrc_nft.did
-          path: .dfx/canisters/icrc7.did
+          path: .dfx/canisters/icrc_nft/icrc_nft.did
