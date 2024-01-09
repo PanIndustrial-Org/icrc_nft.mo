@@ -30,7 +30,8 @@ jobs:
       - name: build canister
         run: |
           dfx start --background
-          dfx deploy
+          dfx canister create icrc_nft
+          dfx build icrc_nft
 
       - uses: actions/upload-artifact@v2
         with:
