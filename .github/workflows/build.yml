@@ -2,9 +2,8 @@ name: mops test
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
+  pull_request:
+    types: [synchronize, opened, reopened, ready_for_review, unlabeled]
 
 jobs:
   test:
@@ -36,4 +35,3 @@ jobs:
         with:
           name: icrc_nft.did
           path: .dfx/canisters/icrc7.did
-
