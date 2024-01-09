@@ -37,9 +37,9 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: icrc_nft.wasm.gz
-          path: .dfx/canisters/icrc_nft/icrc_nft.wasm.gz
+          path: .dfx/local/canisters/icrc_nft/icrc_nft.wasm.gz
 
       - uses: actions/upload-artifact@v2
         with:
           name: icrc_nft.did
-          path: .dfx/canisters/icrc_nft/icrc_nft.did
+          path: .dfx/local/canisters/icrc_nft/icrc_nft.did
