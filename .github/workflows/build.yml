@@ -12,6 +12,8 @@ jobs:
     steps:
       - name: Setup dfx environment
         uses: aviate-labs/setup-dfx@v0.2.6
+        with:
+          dfx-version: 0.15.2
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
