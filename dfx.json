@@ -1,22 +1,17 @@
 {
     "canisters": {
- 
         "icrc7": {
-            "main": "example/main.mo",
+            "main": "src/main.mo",
             "type": "motoko",
             "gzip": true
         }
-        
     },
     "defaults": {
         "build": {
             "args": "",
             "packtool": "mops sources"
-        },
-        "replica": {
-            "subnet_type": "system"
         }
     },
-    "dfx": "0.15.2",
+    "output_env_file": ".env",
     "version": 1
 }

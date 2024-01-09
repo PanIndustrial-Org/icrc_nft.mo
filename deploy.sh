@@ -130,12 +130,12 @@ dfx canister call icrc7 icrc7_owner_of '(vec {0;1})' --query
 dfx canister call icrc7 icrc7_token_metadata '(vec {0})' --query 
 
 # Approve Alice to spend token 0
-dfx canister call icrc7 icrc30_approve "(vec {0;}, record { from_subaccount = null; spender = record {owner = principal \"$ALICE_PRINCIPAL\"; subaccount = null}; memo = null; expires_at = null; created_at_time = null })"
+dfx canister call icrc7 icrc30_approve_tokens "(vec {0;}, record { from_subaccount = null; spender = record {owner = principal \"$ALICE_PRINCIPAL\"; subaccount = null}; memo = null; expires_at = null; created_at_time = null })"
 
 # Retrieve Alice Token approvals
 dfx canister call icrc7 icrc30_is_approved "(record { owner = principal \"$ALICE_PRINCIPAL\"; subaccount = null;},null,0)" --query
 
-dfx canister call icrc7 icrc30_get_approvals "(vec { 0;},null,null)" --query
+dfx canister call icrc7 icrc30_get_token_approvals "(vec { 0;},null,null)" --query
 
 # Switch to Alice
 dfx identity use alice
@@ -168,9 +168,9 @@ dfx canister call icrc7 icrc30_revoke_collection_approvals "(record {
 #Check it is removed
 
 #approve the token for admin
-dfx canister call icrc7 icrc30_approve "(vec {0;}, record { from_subaccount = null; spender = record {owner = principal \"$ADMIN_PRINCIPAL\"; subaccount = null}; memo = null; expires_at = null; created_at_time = null })"
+dfx canister call icrc7 icrc30_approve_tokens "(vec {0;}, record { from_subaccount = null; spender = record {owner = principal \"$ADMIN_PRINCIPAL\"; subaccount = null}; memo = null; expires_at = null; created_at_time = null })"
 
-dfx canister call icrc7 icrc30_get_approvals "(vec { 0;},null,null)" --query
+dfx canister call icrc7 icrc30_get_token_approvals "(vec { 0;},null,null)" --query
 
 #Revoke the approval
 dfx canister call icrc7 icrc30_revoke_token_approvals "(record {
@@ -182,7 +182,7 @@ dfx canister call icrc7 icrc30_revoke_token_approvals "(record {
 })" 
 
 #Check it is removed
-dfx canister call icrc7 icrc30_get_approvals "(vec { 0;},null,null)" --query
+dfx canister call icrc7 icrc30_get_token_approvals "(vec { 0;},null,null)" --query
 
 #Get the transaction log
 dfx canister call icrc7 icrc3_get_blocks "(vec {record {start =0; length = 1000}})" --query

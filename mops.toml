@@ -26,3 +26,6 @@ icrc7-mo = "0.3.1"
 test = "1.1.1"
 fuzz = "0.1.2"
 matchers = "https://github.com/kritzcreek/motoko-matchers#v1.3.0@3dac8a071b69e4e651b25a7d9683fe831eb7cffd"
+
+[toolchain]
+moc = "0.10.3"
