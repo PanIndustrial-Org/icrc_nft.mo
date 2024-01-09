@@ -8,8 +8,10 @@ on:
 jobs:
   call_build:
     uses: ./.github/workflows/build.yml
-  test:
+
+  release:
     runs-on: ubuntu-22.04
+    needs: call_build
 
     steps:
       - name: 'download wasm.gz'
