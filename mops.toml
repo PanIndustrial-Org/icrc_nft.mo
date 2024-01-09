@@ -1,5 +1,5 @@
 [package]
-name = "icrc-nft-mo"
+name = "icrc-nft"
 version = "0.1.1"
 description = "icrc based nft example for motoko"
 repository = "https://github.com/PanIndustrial-Org/icrc_nft.mo"
