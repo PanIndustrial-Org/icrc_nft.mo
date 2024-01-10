@@ -1,44 +1,22 @@
-import Array "mo:base/Array";
-import Vec "mo:vector";
 import Principal "mo:base/Principal";
 import Time "mo:base/Time";
 import Nat "mo:base/Nat";
 import D "mo:base/Debug";
 import CertifiedData "mo:base/CertifiedData";
 
-import CertTree "mo:cert/CertTree";
+import CertTree "mo:ic-certification/CertTree";
 
 import ICRC7 "mo:icrc7-mo";
 import ICRC30 "mo:icrc30-mo";
 import ICRC3 "mo:icrc3-mo";
 
-shared (_init_msg) actor class Example(
+shared (_init_msg) actor class NFTCanister(
   _args : {
     icrc7_args : ICRC7.InitArgs;
     icrc30_args : ICRC30.InitArgs;
     icrc3_args : ICRC3.InitArgs;
   }
 ) : async (ICRC7.Service and ICRC3.Service and ICRC30.Service) = this {
-
-  type Account = ICRC7.Account;
-  type Environment = ICRC7.Environment;
-  type Value = ICRC7.Value;
-  type NFT = ICRC7.NFT;
-  type NFTMap = ICRC7.NFTMap;
-  type OwnerOfResponses = ICRC7.OwnerOfResponses;
-  type TransferArgs = ICRC7.TransferArgs;
-  type TransferResponse = ICRC7.TransferResponse;
-  type TokenApproval = ICRC30.TokenApproval;
-  type CollectionApproval = ICRC30.CollectionApproval;
-  type ApprovalInfo = ICRC30.ApprovalInfo;
-  type ApprovalResponse = ICRC30.ApprovalResponse;
-  type ApprovalCollectionResponse = ICRC30.ApprovalCollectionResponse;
-  type RevokeTokensArgs = ICRC30.RevokeTokensArgs;
-  type RevokeCollectionArgs = ICRC30.RevokeCollectionArgs;
-  type TransferFromArgs = ICRC30.TransferFromArgs;
-  type TransferFromResponse = ICRC30.TransferFromResponse;
-  type RevokeTokensResponse = ICRC30.RevokeTokensResponse;
-  type RevokeCollectionResponse = ICRC30.RevokeCollectionResponse;
 
   stable var init_msg = _init_msg; //preserves original initialization;
 
@@ -254,16 +232,16 @@ shared (_init_msg) actor class Example(
 
   public query func icrc7_token_metadata(token_ids : [Nat]) : async [{
     token_id : Nat;
-    metadata : NFTMap;
+    metadata : ICRC7.NFTMap;
   }] {
     icrc7().token_metadata(token_ids);
   };
 
-  public query func icrc7_owner_of(token_ids : [Nat]) : async OwnerOfResponses {
+  public query func icrc7_owner_of(token_ids : [Nat]) : async ICRC7.OwnerOfResponses {
     icrc7().owner_of(token_ids);
   };
 
-  public query func icrc7_balance_of(account : Account) : async Nat {
+  public query func icrc7_balance_of(account : ICRC7.Account) : async Nat {
     icrc7().balance_of(account);
   };
 
@@ -271,7 +249,7 @@ shared (_init_msg) actor class Example(
     icrc7().tokens(prev, take);
   };
 
-  public query func icrc7_tokens_of(account : Account, prev : ?Nat, take : ?Nat) : async [Nat] {
+  public query func icrc7_tokens_of(account : ICRC7.Account, prev : ?Nat, take : ?Nat) : async [Nat] {
     icrc7().tokens_of(account, prev, take);
   };
 
@@ -279,11 +257,11 @@ shared (_init_msg) actor class Example(
     icrc7().supported_standards();
   };
 
-  public query func icrc7_collection_metadata() : async [(Text, Value)] {
+  public query func icrc7_collection_metadata() : async [(Text, ICRC7.Value)] {
     icrc7().collection_metadata();
   };
 
-  public shared (msg) func icrc7_transfer(args : TransferArgs) : async TransferResponse {
+  public shared (msg) func icrc7_transfer(args : ICRC7.TransferArgs) : async ICRC7.TransferResponse {
     icrc7().transfer(msg.caller, args);
   };
 
@@ -291,7 +269,7 @@ shared (_init_msg) actor class Example(
   // ICRC30 endpoints
   /////////
 
-  public query func icrc30_metadata() : async [(Text, Value)] {
+  public query func icrc30_metadata() : async [(Text, ICRC30.Value)] {
     icrc30().metadata();
   };
 
@@ -303,35 +281,35 @@ shared (_init_msg) actor class Example(
     return icrc30().max_revoke_approvals();
   };
 
-  public query func icrc30_is_approved(spender : Account, from_subaccount : ?Blob, token_id : Nat) : async Bool {
+  public query func icrc30_is_approved(spender : ICRC30.Account, from_subaccount : ?Blob, token_id : Nat) : async Bool {
     return icrc30().is_approved(spender, from_subaccount, token_id);
   };
 
-  public query func icrc30_get_token_approvals(token_ids : [Nat], prev : ?TokenApproval, take : ?Nat) : async [TokenApproval] {
+  public query func icrc30_get_token_approvals(token_ids : [Nat], prev : ?ICRC30.TokenApproval, take : ?Nat) : async [ICRC30.TokenApproval] {
     icrc30().get_token_approvals(token_ids, prev, take);
   };
 
-  public query func icrc30_get_collection_approvals(owner : Account, prev : ?CollectionApproval, take : ?Nat) : async [CollectionApproval] {
+  public query func icrc30_get_collection_approvals(owner : ICRC30.Account, prev : ?ICRC30.CollectionApproval, take : ?Nat) : async [ICRC30.CollectionApproval] {
     icrc30().get_collection_approvals(owner, prev, take);
   };
 
-  public shared (msg) func icrc30_transfer_from(args : TransferFromArgs) : async TransferFromResponse {
+  public shared (msg) func icrc30_transfer_from(args : ICRC30.TransferFromArgs) : async ICRC30.TransferFromResponse {
     icrc30().transfer_from(msg.caller, args);
   };
 
-  public shared (msg) func icrc30_approve_tokens(token_ids : [Nat], approval : ApprovalInfo) : async ApprovalResponse {
+  public shared (msg) func icrc30_approve_tokens(token_ids : [Nat], approval : ICRC30.ApprovalInfo) : async ICRC30.ApprovalResponse {
     icrc30().approve_tokens(msg.caller, token_ids, approval);
   };
 
-  public shared (msg) func icrc30_approve_collection(approval : ApprovalInfo) : async ApprovalCollectionResponse {
+  public shared (msg) func icrc30_approve_collection(approval : ICRC30.ApprovalInfo) : async ICRC30.ApprovalCollectionResponse {
     icrc30().approve_collection(msg.caller, approval);
   };
 
-  public shared (msg) func icrc30_revoke_token_approvals(args : RevokeTokensArgs) : async RevokeTokensResponse {
+  public shared (msg) func icrc30_revoke_token_approvals(args : ICRC30.RevokeTokensArgs) : async ICRC30.RevokeTokensResponse {
     icrc30().revoke_token_approvals(msg.caller, args);
   };
 
-  public shared (msg) func icrc30_revoke_collection_approvals(args : RevokeCollectionArgs) : async RevokeCollectionResponse {
+  public shared (msg) func icrc30_revoke_collection_approvals(args : ICRC30.RevokeCollectionArgs) : async ICRC30.RevokeCollectionResponse {
     icrc30().revoke_collection_approvals(msg.caller, args);
   };
 
