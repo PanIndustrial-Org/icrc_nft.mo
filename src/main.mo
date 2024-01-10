@@ -16,7 +16,7 @@ shared (_init_msg) actor class Example(
   _args : {
     icrc7_args : ICRC7.InitArgs;
     icrc30_args : ICRC30.InitArgs;
-    icrc3_args : ?ICRC3.InitArgs;
+    icrc3_args : ICRC3.InitArgs;
   }
 ) : async (ICRC7.Service and ICRC3.Service and ICRC30.Service) = this {
 
