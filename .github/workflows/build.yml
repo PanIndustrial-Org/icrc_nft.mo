@@ -29,9 +29,9 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: icrc_nft.wasm.gz
-          path: icrc_nft.wasm.gz
+          path: ./icrc_nft.wasm.gz
 
       - uses: actions/upload-artifact@v2
         with:
           name: icrc_nft.did
-          path: icrc_nft.did
+          path: ./icrc_nft.did
