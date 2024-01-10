@@ -11,11 +11,6 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - name: Setup dfx environment
-        uses: aviate-labs/setup-dfx@v0.2.6
-        with:
-          dfx-version: 0.15.2
-
       - uses: actions/checkout@v3
 
       - uses: actions/setup-node@v3
@@ -29,17 +24,14 @@ jobs:
         run: mops install
 
       - name: build canister
-        run: |
-          dfx start --background
-          dfx canister create icrc_nft
-          dfx build icrc_nft
+        run: moc-wrapper src/main.mo -c --idl --public-metadata candid:service --public-metadata candid:args $(mops sources)
 
       - uses: actions/upload-artifact@v2
         with:
           name: icrc_nft.wasm.gz
-          path: .dfx/local/canisters/icrc_nft/icrc_nft.wasm.gz
+          path: icrc_nft.wasm.gz
 
       - uses: actions/upload-artifact@v2
         with:
           name: icrc_nft.did
-          path: .dfx/local/canisters/icrc_nft/icrc_nft.did
+          path: icrc_nft.did
