@@ -24,7 +24,7 @@ jobs:
         run: mops install
 
       - name: build canister
-        run: moc-wrapper src/main.mo -c --idl --public-metadata candid:service --public-metadata candid:args $(mops sources)
+        run: $(mops toolchain bin moc) src/main.mo -c --idl --public-metadata candid:service --public-metadata candid:args $(mops sources)
 
       - uses: actions/upload-artifact@v2
         with:
