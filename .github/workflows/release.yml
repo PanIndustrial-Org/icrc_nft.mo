@@ -1,4 +1,4 @@
-name: mops test
+name: release
 
 on:
   workflow_dispatch:
@@ -6,8 +6,12 @@ on:
     types: [created]
 
 jobs:
-  test:
+  call_build:
+    uses: ./.github/workflows/build.yml
+
+  release:
     runs-on: ubuntu-22.04
+    needs: call_build
 
     steps:
       - name: 'download wasm.gz'
