@@ -22,6 +22,6 @@
     "noFallthroughCasesInSwitch": true,
     "types": ["jest", "node"]
   },
-  "include": ["./src/**/*.ts", "./icrc_nft/**/*.ts"],
+  "include": ["./test/**/*.ts"],
   
 }
