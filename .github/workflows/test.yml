@@ -39,4 +39,4 @@ jobs:
         run: bun i
 
       - name: run jest test
-        run: bun test
+        run: bun run test

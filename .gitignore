@@ -1,3 +1,5 @@
 .dfx
 .mops
 node_modules
+/icrc_nft.wasm
+/icrc_nft.did

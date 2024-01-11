@@ -15,6 +15,7 @@
   },
   "trustedDependencies": ["@hadronous/pic"],
   "scripts": {
+    "build" : "$(mops toolchain bin moc) src/main.mo -o icrc_nft.wasm -c --idl --public-metadata candid:service --public-metadata candid:args $(mops sources)",
     "test": "jest -c test/jest.config.ts"
   }
 }

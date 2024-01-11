@@ -53,7 +53,6 @@ describe("Todo", () => {
 
     afterEach(async () => {
         await pic.tearDown();
-        await pic.upgradeCanister(canisterId, WASM_PATH);
     });
 
     describe("with an anonymous user", () => {
