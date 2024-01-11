@@ -28,10 +28,6 @@ const WASM_PATH = resolve(
     __dirname,
     "..",
     "..",
-    ".dfx",
-    "local",
-    "canisters",
-    "icrc_nft",
     "icrc_nft.wasm"
 );
 

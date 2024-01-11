@@ -37,3 +37,6 @@ jobs:
 
       - name: install dependencies
         run: bun i
+
+      - name: run jest test
+        run: bun test
