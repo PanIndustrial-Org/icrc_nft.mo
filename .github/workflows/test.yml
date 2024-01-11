@@ -23,7 +23,7 @@ jobs:
       - name: 'download wasm.gz'
         uses: actions/download-artifact@v3
         with:
-          name: icrc_nft.wasm.gz
+          name: icrc_nft.wasm
           path: .
 
       - name: 'Download did'
