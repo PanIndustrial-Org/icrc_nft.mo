@@ -3,6 +3,7 @@ import { Principal } from "@dfinity/principal";
 import { AnonymousIdentity } from "@dfinity/agent";
 import { PocketIc, createIdentity, Actor } from "@hadronous/pic";
 import { _SERVICE, idlFactory, init } from "../../src/declarations/icrc_nft";
+import { SubAccount } from "@dfinity/ledger-icp";
 import { IDL } from "@dfinity/candid";
 import {
     InitArgs,
@@ -24,19 +25,16 @@ const initArgs: Arguments = {
 
 const encodedInitArgs = IDL.encode(init({ IDL }), [initArgs]);
 
-const WASM_PATH = resolve(
-    __dirname,
-    "..",
-    "..",
-    "icrc_nft.wasm"
-);
+const WASM_PATH = resolve(__dirname, "..", "..", "icrc_nft.wasm");
 
-describe("Todo", () => {
+describe("ICRC NFT", () => {
     let pic: PocketIc;
     let actor: Actor<_SERVICE>;
     let canisterId: Principal;
 
     const alice = createIdentity("superSecretAlicePassword");
+    const bob = createIdentity("superSecretBobPassword");
+    let unauthorizedError: string;
 
     beforeEach(async () => {
         pic = await PocketIc.create();
@@ -49,85 +47,90 @@ describe("Todo", () => {
         );
         actor = fixture.actor;
         canisterId = fixture.canisterId;
+        unauthorizedError = `Canister ${canisterId.toText()} trapped explicitly: unauthorized`;
     });
 
     afterEach(async () => {
         await pic.tearDown();
     });
 
-    describe("with an anonymous user", () => {
-        const identity = new AnonymousIdentity();
-        let expectedError: string;
-
-        beforeEach(() => {
-            actor.setIdentity(identity);
-            expectedError = `Canister ${canisterId.toText()} trapped explicitly: unauthorized`;
+    describe("when minting an nft", () => {
+        describe("with anonymous", () => {
+            beforeEach(() => {
+                actor.setIdentity(new AnonymousIdentity());
+            });
+            it("should trap", async () => {
+                await expect(
+                    actor.mint({ owner: bob.getPrincipal(), subaccount: [] })
+                ).rejects.toThrow(unauthorizedError);
+            });
         });
 
-        it("should prevent minting an nft", async () => {
-            await expect(
-                actor.mint({
-                    memo: [],
-                    tokens: [
+        describe("with bob", () => {
+            beforeEach(() => {
+                actor.setIdentity(bob);
+            });
+            it("should trap", async () => {
+                await expect(
+                    actor.mint({ owner: bob.getPrincipal(), subaccount: [] })
+                ).rejects.toThrow(unauthorizedError);
+            });
+        });
+
+        describe("with alice", () => {
+            beforeEach(() => {
+                actor.setIdentity(alice);
+            });
+            let index = 0n;
+            function generateResponse(): SetNFTBatchResponse {
+                return {
+                    Ok: [
                         {
-                            token_id: 1n,
-                            metadata: {
-                                Class: [
-                                    {
-                                        name: "src",
-                                        value: {
-                                            Text: "https://images-assets.nasa.gov/image/PIA18249/PIA18249~orig.jpg",
-                                        },
-                                        immutable: true,
-                                    },
-                                ],
-                            },
-                            override: true,
+                            result: { Ok: index },
+                            token_id: index++,
                         },
                     ],
-                    created_at_time: [],
-                })
-            ).rejects.toThrow(expectedError);
-        });
-    });
-
-    describe("with alice", () => {
-        beforeEach(() => {
-            actor.setIdentity(alice);
-        });
-
-        it("should allow minting an nft", async () => {
-            let expectedResponse: SetNFTBatchResponse = {
-                Ok: [
-                    {
-                        result: { Ok: 0n },
-                        token_id: 1n,
-                    },
-                ],
-            };
-            await expect(
-                actor.mint({
-                    memo: [],
-                    tokens: [
+                };
+            }
+            function generateDefaultResponse(): SetNFTBatchResponse {
+                return {
+                    Ok: [
                         {
-                            token_id: 1n,
-                            metadata: {
-                                Class: [
-                                    {
-                                        name: "src",
-                                        value: {
-                                            Text: "https://images-assets.nasa.gov/image/PIA18249/PIA18249~orig.jpg",
-                                        },
-                                        immutable: true,
-                                    },
-                                ],
-                            },
-                            override: true,
+                            result: { Ok: 0n },
+                            token_id: 0n,
                         },
                     ],
-                    created_at_time: [],
-                })
-            ).resolves.toEqual(expectedResponse);
+                };
+            }
+
+            it("should succeed minting an nft to bob", async () => {
+                await expect(
+                    actor.mint({ owner: bob.getPrincipal(), subaccount: [] })
+                ).resolves.toEqual(generateDefaultResponse());
+            });
+
+            it("should succeed minting an nft to bob with a subaccount", async () => {
+                await expect(
+                    actor.mint({
+                        owner: bob.getPrincipal(),
+                        subaccount: [SubAccount.fromID(1).toUint8Array()],
+                    })
+                ).resolves.toEqual(generateDefaultResponse());
+            });
+            it("should succeed minting nft to bob with a subaccount and to the default subaccount", async () => {
+                await expect(
+                    actor.mint({
+                        owner: bob.getPrincipal(),
+                        subaccount: [SubAccount.fromID(1).toUint8Array()],
+                    })
+                ).resolves.toEqual(generateResponse());
+                await expect(
+                    actor.mint({
+                        owner: bob.getPrincipal(),
+                        subaccount: [],
+                    })
+                ).resolves.toEqual(generateResponse());
+            });
         });
     });
 });

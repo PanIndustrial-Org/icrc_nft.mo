@@ -17,8 +17,8 @@ jobs:
         with:
           node-version: 18
 
-      - name: install mops
-        run: npm i ic-mops -g
+      - name: Install mops
+        uses: ZenVoich/setup-mops@v1
 
       - name: install mops packages
         run: mops install

@@ -170,21 +170,9 @@ type SetNFTResult =
                  };
    Ok: nat;
  };
-type SetNFTRequest = 
- record {
-   created_at_time: opt nat64;
-   memo: opt blob;
-   tokens: vec SetNFTItemRequest;
- };
 type SetNFTItemResponse = 
  record {
    result: SetNFTResult;
-   token_id: nat;
- };
-type SetNFTItemRequest = 
- record {
-   metadata: NFTInput;
-   override: bool;
    token_id: nat;
  };
 type SetNFTError = 
@@ -280,12 +268,6 @@ type RevokeCollectionArgs =
    memo: opt blob;
    spender: opt Account__2;
  };
-type PropertyShared = 
- record {
-   immutable: bool;
-   name: text;
-   value: CandyShared;
- };
 type OwnerOfResponses = vec OwnerOfResponse;
 type OwnerOfResponse = 
  record {
@@ -297,40 +279,6 @@ type NFTMap =
        text;
        Value;
      };
-type NFTInput = 
- variant {
-   Array: vec CandyShared;
-   Blob: blob;
-   Bool: bool;
-   Bytes: vec nat8;
-   Class: vec PropertyShared;
-   Float: float64;
-   Floats: vec float64;
-   Int: int;
-   Int16: int16;
-   Int32: int32;
-   Int64: int64;
-   Int8: int8;
-   Ints: vec int;
-   Map: vec record {
-              text;
-              CandyShared;
-            };
-   Nat: nat;
-   Nat16: nat16;
-   Nat32: nat32;
-   Nat64: nat64;
-   Nat8: nat8;
-   Nats: vec nat;
-   Option: opt CandyShared;
-   Principal: principal;
-   Set: vec CandyShared;
-   Text: text;
-   ValueMap: vec record {
-                   CandyShared;
-                   CandyShared;
-                 };
- };
 type NFTCanister = 
  service {
    burn: (BurnNFTRequest) -> (BurnNFTBatchResponse);
@@ -383,7 +331,7 @@ type NFTCanister =
    icrc7_tokens_of: (Account__1, opt nat, opt nat) -> (vec nat) query;
    icrc7_total_supply: () -> (nat) query;
    icrc7_transfer: (TransferArgs) -> (TransferResponse);
-   mint: (SetNFTRequest) -> (SetNFTBatchResponse);
+   mint: (Account__1) -> (SetNFTBatchResponse);
  };
 type InitArgs__3 = 
  opt
@@ -472,40 +420,6 @@ type CollectionApproval =
    from_subaccount: opt blob;
    memo: opt blob;
    spender: Account__2;
- };
-type CandyShared = 
- variant {
-   Array: vec CandyShared;
-   Blob: blob;
-   Bool: bool;
-   Bytes: vec nat8;
-   Class: vec PropertyShared;
-   Float: float64;
-   Floats: vec float64;
-   Int: int;
-   Int16: int16;
-   Int32: int32;
-   Int64: int64;
-   Int8: int8;
-   Ints: vec int;
-   Map: vec record {
-              text;
-              CandyShared;
-            };
-   Nat: nat;
-   Nat16: nat16;
-   Nat32: nat32;
-   Nat64: nat64;
-   Nat8: nat8;
-   Nats: vec nat;
-   Option: opt CandyShared;
-   Principal: principal;
-   Set: vec CandyShared;
-   Text: text;
-   ValueMap: vec record {
-                   CandyShared;
-                   CandyShared;
-                 };
  };
 type BurnNFTResult = 
  variant {

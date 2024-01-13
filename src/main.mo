@@ -3,6 +3,8 @@ import Time "mo:base/Time";
 import Nat "mo:base/Nat";
 import D "mo:base/Debug";
 import CertifiedData "mo:base/CertifiedData";
+import Blob "mo:base/Blob";
+import Array "mo:base/Array";
 
 import CertTree "mo:ic-certification/CertTree";
 
@@ -338,9 +340,44 @@ shared (_init_msg) actor class NFTCanister(
   // one might deploy an NFT.
   /////////
 
-  public shared (msg) func mint(tokens : ICRC7.SetNFTRequest) : async ICRC7.SetNFTBatchResponse {
-    switch (icrc7().set_nfts(msg.caller, tokens)) {
-      case (#ok(val)) val;
+  stable var nextTokenId = 0;
+
+  public shared (msg) func mint(to : ICRC7.Account) : async ICRC7.SetNFTBatchResponse {
+    let setNftRequest : ICRC7.SetNFTRequest = {
+      memo = null;
+      created_at_time = null;
+      tokens = [{
+        token_id = nextTokenId;
+        override = false;
+        metadata = #Map([
+          (
+            "tokenUri",
+            #Text("asset canister url"),
+          ),
+          (
+            "icrc7:owner_account",
+            #Map([
+              (
+                "icrc7:owner_principal",
+                #Blob(Principal.toBlob(to.owner)),
+              ),
+              (
+                "icrc7:owner_subaccount",
+                switch (to.subaccount) {
+                  case (null) #Blob(Blob.fromArray(Array.freeze(Array.init<Nat8>(32, 0))));
+                  case (?val) #Blob(val);
+                },
+              ),
+            ]),
+          ),
+        ]);
+      }];
+    };
+    switch (icrc7().set_nfts(msg.caller, setNftRequest)) {
+      case (#ok(val)) {
+        nextTokenId += 1;
+        val;
+      };
       case (#err(err)) D.trap(err);
     };
   };

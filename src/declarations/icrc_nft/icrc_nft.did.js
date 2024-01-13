@@ -1,6 +1,5 @@
 export const idlFactory = ({ IDL }) => {
   const ArchivedTransactionResponse = IDL.Rec();
-  const CandyShared = IDL.Rec();
   const Value = IDL.Rec();
   const Value__2 = IDL.Rec();
   const IndexType = IDL.Variant({
@@ -388,77 +387,6 @@ export const idlFactory = ({ IDL }) => {
     'Ok' : IDL.Vec(TransferResponseItem),
     'Err' : TransferBatchError,
   });
-  const PropertyShared = IDL.Record({
-    'value' : CandyShared,
-    'name' : IDL.Text,
-    'immutable' : IDL.Bool,
-  });
-  CandyShared.fill(
-    IDL.Variant({
-      'Int' : IDL.Int,
-      'Map' : IDL.Vec(IDL.Tuple(IDL.Text, CandyShared)),
-      'Nat' : IDL.Nat,
-      'Set' : IDL.Vec(CandyShared),
-      'Nat16' : IDL.Nat16,
-      'Nat32' : IDL.Nat32,
-      'Nat64' : IDL.Nat64,
-      'Blob' : IDL.Vec(IDL.Nat8),
-      'Bool' : IDL.Bool,
-      'Int8' : IDL.Int8,
-      'Ints' : IDL.Vec(IDL.Int),
-      'Nat8' : IDL.Nat8,
-      'Nats' : IDL.Vec(IDL.Nat),
-      'Text' : IDL.Text,
-      'Bytes' : IDL.Vec(IDL.Nat8),
-      'Int16' : IDL.Int16,
-      'Int32' : IDL.Int32,
-      'Int64' : IDL.Int64,
-      'Option' : IDL.Opt(CandyShared),
-      'Floats' : IDL.Vec(IDL.Float64),
-      'Float' : IDL.Float64,
-      'Principal' : IDL.Principal,
-      'Array' : IDL.Vec(CandyShared),
-      'ValueMap' : IDL.Vec(IDL.Tuple(CandyShared, CandyShared)),
-      'Class' : IDL.Vec(PropertyShared),
-    })
-  );
-  const NFTInput = IDL.Variant({
-    'Int' : IDL.Int,
-    'Map' : IDL.Vec(IDL.Tuple(IDL.Text, CandyShared)),
-    'Nat' : IDL.Nat,
-    'Set' : IDL.Vec(CandyShared),
-    'Nat16' : IDL.Nat16,
-    'Nat32' : IDL.Nat32,
-    'Nat64' : IDL.Nat64,
-    'Blob' : IDL.Vec(IDL.Nat8),
-    'Bool' : IDL.Bool,
-    'Int8' : IDL.Int8,
-    'Ints' : IDL.Vec(IDL.Int),
-    'Nat8' : IDL.Nat8,
-    'Nats' : IDL.Vec(IDL.Nat),
-    'Text' : IDL.Text,
-    'Bytes' : IDL.Vec(IDL.Nat8),
-    'Int16' : IDL.Int16,
-    'Int32' : IDL.Int32,
-    'Int64' : IDL.Int64,
-    'Option' : IDL.Opt(CandyShared),
-    'Floats' : IDL.Vec(IDL.Float64),
-    'Float' : IDL.Float64,
-    'Principal' : IDL.Principal,
-    'Array' : IDL.Vec(CandyShared),
-    'ValueMap' : IDL.Vec(IDL.Tuple(CandyShared, CandyShared)),
-    'Class' : IDL.Vec(PropertyShared),
-  });
-  const SetNFTItemRequest = IDL.Record({
-    'token_id' : IDL.Nat,
-    'metadata' : NFTInput,
-    'override' : IDL.Bool,
-  });
-  const SetNFTRequest = IDL.Record({
-    'memo' : IDL.Opt(IDL.Vec(IDL.Nat8)),
-    'tokens' : IDL.Vec(SetNFTItemRequest),
-    'created_at_time' : IDL.Opt(IDL.Nat64),
-  });
   const SetNFTError = IDL.Variant({
     'GenericError' : IDL.Record({
       'message' : IDL.Text,
@@ -603,7 +531,7 @@ export const idlFactory = ({ IDL }) => {
       ),
     'icrc7_total_supply' : IDL.Func([], [IDL.Nat], ['query']),
     'icrc7_transfer' : IDL.Func([TransferArgs], [TransferResponse], []),
-    'mint' : IDL.Func([SetNFTRequest], [SetNFTBatchResponse], []),
+    'mint' : IDL.Func([Account__1], [SetNFTBatchResponse], []),
   });
   return NFTCanister;
 };
