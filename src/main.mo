@@ -382,8 +382,13 @@ shared (_init_msg) actor class NFTCanister(
     };
   };
 
-  public shared (msg) func burn(tokens : ICRC7.BurnNFTRequest) : async ICRC7.BurnNFTBatchResponse {
-    switch (icrc7().burn_nfts(msg.caller, tokens)) {
+  public shared (msg) func burn(token : Nat) : async ICRC7.BurnNFTBatchResponse {
+    let burnNftRequest : ICRC7.BurnNFTRequest = {
+      memo = null;
+      tokens = [token];
+      created_at_time = null;
+    };
+    switch (icrc7().burn_nfts(msg.caller, burnNftRequest)) {
       case (#ok(val)) val;
       case (#err(err)) D.trap(err);
     };
