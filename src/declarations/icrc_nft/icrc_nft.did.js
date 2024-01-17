@@ -55,11 +55,6 @@ export const idlFactory = ({ IDL }) => {
       'symbol' : IDL.Opt(IDL.Text),
     })
   );
-  const BurnNFTRequest = IDL.Record({
-    'memo' : IDL.Opt(IDL.Vec(IDL.Nat8)),
-    'tokens' : IDL.Vec(IDL.Nat),
-    'created_at_time' : IDL.Opt(IDL.Nat64),
-  });
   const BurnNFTError = IDL.Variant({
     'GenericError' : IDL.Record({
       'message' : IDL.Text,
@@ -420,7 +415,7 @@ export const idlFactory = ({ IDL }) => {
     'Err' : SetNFTBatchError,
   });
   const NFTCanister = IDL.Service({
-    'burn' : IDL.Func([BurnNFTRequest], [BurnNFTBatchResponse], []),
+    'burn' : IDL.Func([IDL.Nat], [BurnNFTBatchResponse], []),
     'get_tip' : IDL.Func([], [Tip], ['query']),
     'icrc30_approve_collection' : IDL.Func(
         [ApprovalInfo__1],

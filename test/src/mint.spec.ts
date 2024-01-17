@@ -1,31 +1,10 @@
-import { resolve } from "node:path";
 import { Principal } from "@dfinity/principal";
 import { AnonymousIdentity } from "@dfinity/agent";
 import { PocketIc, createIdentity, Actor } from "@hadronous/pic";
-import { _SERVICE, idlFactory, init } from "../../src/declarations/icrc_nft";
+import { _SERVICE } from "../../src/declarations/icrc_nft";
 import { SubAccount } from "@dfinity/ledger-icp";
-import { IDL } from "@dfinity/candid";
-import {
-    InitArgs,
-    InitArgs__1,
-    InitArgs__3,
-    SetNFTBatchResponse,
-} from "../../src/declarations/icrc_nft/icrc_nft.did";
-
-type Arguments = {
-    icrc3_args: InitArgs__1;
-    icrc30_args: InitArgs;
-    icrc7_args: InitArgs__3;
-};
-const initArgs: Arguments = {
-    icrc30_args: [],
-    icrc3_args: [],
-    icrc7_args: [],
-};
-
-const encodedInitArgs = IDL.encode(init({ IDL }), [initArgs]);
-
-const WASM_PATH = resolve(__dirname, "..", "..", "icrc_nft.wasm");
+import { SetNFTBatchResponse } from "../../src/declarations/icrc_nft/icrc_nft.did";
+import { deployCanister } from "./setup";
 
 describe("ICRC NFT", () => {
     let pic: PocketIc;
@@ -37,16 +16,9 @@ describe("ICRC NFT", () => {
     let unauthorizedError: string;
 
     beforeEach(async () => {
-        pic = await PocketIc.create();
-        const fixture = await pic.setupCanister<_SERVICE>(
-            idlFactory,
-            WASM_PATH,
-            undefined,
-            new Uint8Array(encodedInitArgs),
-            alice.getPrincipal()
-        );
-        actor = fixture.actor;
-        canisterId = fixture.canisterId;
+        ({ pic, canisterId, actor } = await deployCanister({
+            deployer: alice.getPrincipal(),
+        }));
         unauthorizedError = `Canister ${canisterId.toText()} trapped explicitly: unauthorized`;
     });
 
@@ -117,7 +89,7 @@ describe("ICRC NFT", () => {
                     })
                 ).resolves.toEqual(generateDefaultResponse());
             });
-            it("should succeed minting nft to bob with a subaccount and to the default subaccount", async () => {
+            it("should succeed minting nft to bob with a subaccount and with the default subaccount", async () => {
                 await expect(
                     actor.mint({
                         owner: bob.getPrincipal(),

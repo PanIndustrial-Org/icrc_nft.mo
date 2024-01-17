@@ -281,7 +281,7 @@ type NFTMap =
      };
 type NFTCanister = 
  service {
-   burn: (BurnNFTRequest) -> (BurnNFTBatchResponse);
+   burn: (nat) -> (BurnNFTBatchResponse);
    get_tip: () -> (Tip) query;
    icrc30_approve_collection: (ApprovalInfo__1) ->
     (ApprovalCollectionResponse);
@@ -425,12 +425,6 @@ type BurnNFTResult =
  variant {
    Err: BurnNFTError;
    Ok: nat;
- };
-type BurnNFTRequest = 
- record {
-   created_at_time: opt nat64;
-   memo: opt blob;
-   tokens: vec nat;
  };
 type BurnNFTItemResponse = 
  record {

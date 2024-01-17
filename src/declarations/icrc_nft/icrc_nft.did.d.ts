@@ -81,11 +81,6 @@ export interface BurnNFTItemResponse {
   'result' : BurnNFTResult,
   'token_id' : bigint,
 }
-export interface BurnNFTRequest {
-  'memo' : [] | [Uint8Array | number[]],
-  'tokens' : Array<bigint>,
-  'created_at_time' : [] | [bigint],
-}
 export type BurnNFTResult = { 'Ok' : bigint } |
   { 'Err' : BurnNFTError };
 export interface CollectionApproval {
@@ -164,7 +159,7 @@ export type InitArgs__3 = [] | [
   }
 ];
 export interface NFTCanister {
-  'burn' : ActorMethod<[BurnNFTRequest], BurnNFTBatchResponse>,
+  'burn' : ActorMethod<[bigint], BurnNFTBatchResponse>,
   'get_tip' : ActorMethod<[], Tip>,
   'icrc30_approve_collection' : ActorMethod<
     [ApprovalInfo__1],
