@@ -37,4 +37,4 @@ jobs:
         run: bun i
 
       - name: run jest test
-        run: bun run test
+        run: bun run test-ci
