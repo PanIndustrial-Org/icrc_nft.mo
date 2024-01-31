@@ -81,38 +81,8 @@ export interface BurnNFTItemResponse {
   'result' : BurnNFTResult,
   'token_id' : bigint,
 }
-export interface BurnNFTRequest {
-  'memo' : [] | [Uint8Array | number[]],
-  'tokens' : Array<bigint>,
-  'created_at_time' : [] | [bigint],
-}
 export type BurnNFTResult = { 'Ok' : bigint } |
   { 'Err' : BurnNFTError };
-export type CandyShared = { 'Int' : bigint } |
-  { 'Map' : Array<[string, CandyShared]> } |
-  { 'Nat' : bigint } |
-  { 'Set' : Array<CandyShared> } |
-  { 'Nat16' : number } |
-  { 'Nat32' : number } |
-  { 'Nat64' : bigint } |
-  { 'Blob' : Uint8Array | number[] } |
-  { 'Bool' : boolean } |
-  { 'Int8' : number } |
-  { 'Ints' : Array<bigint> } |
-  { 'Nat8' : number } |
-  { 'Nats' : Array<bigint> } |
-  { 'Text' : string } |
-  { 'Bytes' : Uint8Array | number[] } |
-  { 'Int16' : number } |
-  { 'Int32' : number } |
-  { 'Int64' : bigint } |
-  { 'Option' : [] | [CandyShared] } |
-  { 'Floats' : Array<number> } |
-  { 'Float' : number } |
-  { 'Principal' : Principal } |
-  { 'Array' : Array<CandyShared> } |
-  { 'ValueMap' : Array<[CandyShared, CandyShared]> } |
-  { 'Class' : Array<PropertyShared> };
 export interface CollectionApproval {
   'memo' : [] | [Uint8Array | number[]],
   'from_subaccount' : [] | [Uint8Array | number[]],
@@ -189,7 +159,7 @@ export type InitArgs__3 = [] | [
   }
 ];
 export interface NFTCanister {
-  'burn' : ActorMethod<[BurnNFTRequest], BurnNFTBatchResponse>,
+  'burn' : ActorMethod<[bigint], BurnNFTBatchResponse>,
   'get_tip' : ActorMethod<[], Tip>,
   'icrc30_approve_collection' : ActorMethod<
     [ApprovalInfo__1],
@@ -260,44 +230,14 @@ export interface NFTCanister {
   >,
   'icrc7_total_supply' : ActorMethod<[], bigint>,
   'icrc7_transfer' : ActorMethod<[TransferArgs], TransferResponse>,
-  'mint' : ActorMethod<[SetNFTRequest], SetNFTBatchResponse>,
+  'mint' : ActorMethod<[Account__1], SetNFTBatchResponse>,
 }
-export type NFTInput = { 'Int' : bigint } |
-  { 'Map' : Array<[string, CandyShared]> } |
-  { 'Nat' : bigint } |
-  { 'Set' : Array<CandyShared> } |
-  { 'Nat16' : number } |
-  { 'Nat32' : number } |
-  { 'Nat64' : bigint } |
-  { 'Blob' : Uint8Array | number[] } |
-  { 'Bool' : boolean } |
-  { 'Int8' : number } |
-  { 'Ints' : Array<bigint> } |
-  { 'Nat8' : number } |
-  { 'Nats' : Array<bigint> } |
-  { 'Text' : string } |
-  { 'Bytes' : Uint8Array | number[] } |
-  { 'Int16' : number } |
-  { 'Int32' : number } |
-  { 'Int64' : bigint } |
-  { 'Option' : [] | [CandyShared] } |
-  { 'Floats' : Array<number> } |
-  { 'Float' : number } |
-  { 'Principal' : Principal } |
-  { 'Array' : Array<CandyShared> } |
-  { 'ValueMap' : Array<[CandyShared, CandyShared]> } |
-  { 'Class' : Array<PropertyShared> };
 export type NFTMap = Array<[string, Value]>;
 export interface OwnerOfResponse {
   'token_id' : bigint,
   'account' : [] | [Account],
 }
 export type OwnerOfResponses = Array<OwnerOfResponse>;
-export interface PropertyShared {
-  'value' : CandyShared,
-  'name' : string,
-  'immutable' : boolean,
-}
 export interface RevokeCollectionArgs {
   'memo' : [] | [Uint8Array | number[]],
   'from_subaccount' : [] | [Uint8Array | number[]],
@@ -357,19 +297,9 @@ export type SetNFTError = {
   } |
   { 'TokenExists' : null } |
   { 'NonExistingTokenId' : null };
-export interface SetNFTItemRequest {
-  'token_id' : bigint,
-  'metadata' : NFTInput,
-  'override' : boolean,
-}
 export interface SetNFTItemResponse {
   'result' : SetNFTResult,
   'token_id' : bigint,
-}
-export interface SetNFTRequest {
-  'memo' : [] | [Uint8Array | number[]],
-  'tokens' : Array<SetNFTItemRequest>,
-  'created_at_time' : [] | [bigint],
 }
 export type SetNFTResult = { 'Ok' : bigint } |
   { 'Err' : SetNFTError } |

@@ -1,4 +1,4 @@
-name: mops test
+name: tests
 
 on:
   workflow_dispatch:
@@ -16,6 +16,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - uses: oven-sh/setup-bun@v1
       - uses: actions/setup-node@v3
         with:
           node-version: 18
@@ -23,7 +24,7 @@ jobs:
       - name: 'download wasm.gz'
         uses: actions/download-artifact@v3
         with:
-          name: icrc_nft.wasm.gz
+          name: icrc_nft.wasm
           path: .
 
       - name: 'Download did'
@@ -32,11 +33,8 @@ jobs:
           name: icrc_nft.did
           path: .
 
-      - name: install bun
-        run: curl -fsSL https://bun.sh/install | bash
-
       - name: install dependencies
         run: bun i
 
       - name: run jest test
-        run: bun run test
+        run: bun run test-ci

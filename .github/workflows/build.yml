@@ -3,8 +3,6 @@ name: build
 on:
   workflow_call:
   workflow_dispatch:
-  pull_request:
-    types: [synchronize, opened, reopened, ready_for_review, unlabeled]
 
 jobs:
   build:
@@ -17,8 +15,8 @@ jobs:
         with:
           node-version: 18
 
-      - name: install mops
-        run: npm i ic-mops -g
+      - name: Install mops
+        uses: ZenVoich/setup-mops@v1
 
       - name: install mops packages
         run: mops install
@@ -28,10 +26,10 @@ jobs:
 
       - uses: actions/upload-artifact@v2
         with:
-          name: icrc_nft.wasm.gz
-          path: ./main.wasm
+          name: icrc_nft.wasm
+          path: ./icrc_nft.wasm
 
       - uses: actions/upload-artifact@v2
         with:
           name: icrc_nft.did
-          path: ./main.did
+          path: ./icrc_nft.did

@@ -5,6 +5,10 @@
 -   mops
 -   dfx 0.15.1
 
+## Test
+
+-   run `npm run test`
+
 ## Deployment
 
 -   `dfx start --clean --background`
