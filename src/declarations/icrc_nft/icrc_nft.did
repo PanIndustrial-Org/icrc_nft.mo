@@ -1,0 +1,554 @@
+type Value__3 = 
+ variant {
+   Array: vec Value;
+   Blob: blob;
+   Int: int;
+   Map: vec record {
+              text;
+              Value;
+            };
+   Nat: nat;
+   Text: text;
+ };
+type Value__2 = 
+ variant {
+   Array: vec Value__2;
+   Blob: blob;
+   Int: int;
+   Map: vec record {
+              text;
+              Value__2;
+            };
+   Nat: nat;
+   Text: text;
+ };
+type Value__1 = 
+ variant {
+   Array: vec Value;
+   Blob: blob;
+   Int: int;
+   Map: vec record {
+              text;
+              Value;
+            };
+   Nat: nat;
+   Text: text;
+ };
+type Value = 
+ variant {
+   Array: vec Value;
+   Blob: blob;
+   Int: int;
+   Map: vec record {
+              text;
+              Value;
+            };
+   Nat: nat;
+   Text: text;
+ };
+type TransferResponseItem = 
+ record {
+   token_id: nat;
+   transfer_result: variant {
+                      Err: TransferError;
+                      Ok: nat;
+                    };
+ };
+type TransferResponse = 
+ variant {
+   Err: TransferBatchError;
+   Ok: vec TransferResponseItem;
+ };
+type TransferFromResponseItem = 
+ record {
+   token_id: nat;
+   transfer_result: variant {
+                      Err: TransferFromError;
+                      Ok: nat;
+                    };
+ };
+type TransferFromResponse = 
+ variant {
+   Err: TransferFromBatchError;
+   Ok: vec TransferFromResponseItem;
+ };
+type TransferFromError = 
+ variant {
+   Duplicate: record {duplicate_of: nat;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   NonExistingTokenId;
+   Unauthorized;
+ };
+type TransferFromBatchError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   InvalidRecipient;
+   TooOld;
+ };
+type TransferFromArgs = 
+ record {
+   created_at_time: opt nat64;
+   from: Account__2;
+   memo: opt blob;
+   spender_subaccount: opt blob;
+   to: Account__2;
+   token_ids: vec nat;
+ };
+type TransferError = 
+ variant {
+   Duplicate: record {duplicate_of: nat;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   NonExistingTokenId;
+   Unauthorized;
+ };
+type TransferBatchError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   InvalidRecipient;
+   TooOld;
+ };
+type TransferArgs = 
+ record {
+   created_at_time: opt nat64;
+   memo: opt blob;
+   subaccount: opt blob;
+   to: Account;
+   token_ids: vec nat;
+ };
+type TransactionRange__1 = 
+ record {
+   length: nat;
+   start: nat;
+ };
+type TransactionRange = 
+ record {
+   length: nat;
+   start: nat;
+ };
+type TokenApproval = 
+ record {
+   approval_info: ApprovalInfo;
+   token_id: nat;
+ };
+type Tip = 
+ record {
+   hash_tree: blob;
+   last_block_hash: blob;
+   last_block_index: blob;
+ };
+type SupportedStandards__1 = 
+ vec record {
+       name: text;
+       url: text;
+     };
+type SupportedStandards = 
+ vec record {
+       name: text;
+       url: text;
+     };
+type Subaccount = blob;
+type SetNFTResult = 
+ variant {
+   Err: SetNFTError;
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   Ok: nat;
+ };
+type SetNFTItemResponse = 
+ record {
+   result: SetNFTResult;
+   token_id: nat;
+ };
+type SetNFTError = 
+ variant {
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   NonExistingTokenId;
+   TokenExists;
+ };
+type SetNFTBatchResponse = 
+ variant {
+   Err: SetNFTBatchError;
+   Ok: vec SetNFTItemResponse;
+ };
+type SetNFTBatchError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   TooOld;
+ };
+type RevokeTokensResult = 
+ variant {
+   Err: RevokeTokensError;
+   Ok: nat;
+ };
+type RevokeTokensResponseItem = 
+ record {
+   revoke_result: RevokeTokensResult;
+   spender: opt Account__2;
+   token_id: nat;
+ };
+type RevokeTokensResponse = 
+ variant {
+   Err: RevokeTokensBatchError;
+   Ok: vec RevokeTokensResponseItem;
+ };
+type RevokeTokensError = 
+ variant {
+   ApprovalDoesNotExist;
+   Duplicate: record {duplicate_of: nat;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   NonExistingTokenId;
+   Unauthorized;
+ };
+type RevokeTokensBatchError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   TooOld;
+ };
+type RevokeTokensArgs = 
+ record {
+   created_at_time: opt nat64;
+   from_subaccount: opt blob;
+   memo: opt blob;
+   spender: opt Account__2;
+   token_ids: vec nat;
+ };
+type RevokeCollectionResponseItem = 
+ record {
+   revoke_result: RevokeTokensResult;
+   spender: opt Account__2;
+ };
+type RevokeCollectionResponse = 
+ variant {
+   Err: RevokeCollectionBatchError;
+   Ok: vec RevokeCollectionResponseItem;
+ };
+type RevokeCollectionBatchError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   TooOld;
+ };
+type RevokeCollectionArgs = 
+ record {
+   created_at_time: opt nat64;
+   from_subaccount: opt blob;
+   memo: opt blob;
+   spender: opt Account__2;
+ };
+type OwnerOfResponses = vec OwnerOfResponse;
+type OwnerOfResponse = 
+ record {
+   account: opt Account;
+   token_id: nat;
+ };
+type NFTMap = 
+ vec record {
+       text;
+       Value;
+     };
+type NFTCanister = 
+ service {
+   burn: (nat) -> (BurnNFTBatchResponse);
+   get_tip: () -> (Tip) query;
+   icrc30_approve_collection: (ApprovalInfo__1) ->
+    (ApprovalCollectionResponse);
+   icrc30_approve_tokens: (vec nat, ApprovalInfo__1) -> (ApprovalResponse);
+   icrc30_get_collection_approvals: (Account__3, opt CollectionApproval,
+    opt nat) -> (vec CollectionApproval) query;
+   icrc30_get_token_approvals: (vec nat, opt TokenApproval, opt nat) ->
+    (vec TokenApproval) query;
+   icrc30_is_approved: (Account__3, opt blob, nat) -> (bool) query;
+   icrc30_max_approvals_per_token_or_collection: () -> (opt nat) query;
+   icrc30_max_revoke_approvals: () -> (opt nat) query;
+   icrc30_metadata: () -> (vec record {
+                                 text;
+                                 Value__3;
+                               }) query;
+   icrc30_revoke_collection_approvals: (RevokeCollectionArgs) ->
+    (RevokeCollectionResponse);
+   icrc30_revoke_token_approvals: (RevokeTokensArgs) ->
+    (RevokeTokensResponse);
+   icrc30_transfer_from: (TransferFromArgs) -> (TransferFromResponse);
+   icrc3_get_archives: (GetArchivesArgs) -> (GetArchivesResult) query;
+   icrc3_get_blocks: (vec TransactionRange) -> (GetTransactionsResult) query;
+   icrc3_get_tip_certificate: () -> (opt DataCertificate) query;
+   icrc7_balance_of: (Account__1) -> (nat) query;
+   icrc7_collection_metadata: () -> (vec record {
+                                           text;
+                                           Value__1;
+                                         }) query;
+   icrc7_default_take_value: () -> (opt nat) query;
+   icrc7_description: () -> (opt text) query;
+   icrc7_logo: () -> (opt text) query;
+   icrc7_max_memo_size: () -> (opt nat) query;
+   icrc7_max_query_batch_size: () -> (opt nat) query;
+   icrc7_max_take_value: () -> (opt nat) query;
+   icrc7_max_update_batch_size: () -> (opt nat) query;
+   icrc7_name: () -> (text) query;
+   icrc7_owner_of: (vec nat) -> (OwnerOfResponses) query;
+   icrc7_supply_cap: () -> (opt nat) query;
+   icrc7_supported_standards: () -> (SupportedStandards__1) query;
+   icrc7_symbol: () -> (text) query;
+   icrc7_token_metadata: (vec nat) ->
+    (vec record {
+           metadata: NFTMap;
+           token_id: nat;
+         }) query;
+   icrc7_tokens: (opt nat, opt nat) -> (vec nat) query;
+   icrc7_tokens_of: (Account__1, opt nat, opt nat) -> (vec nat) query;
+   icrc7_total_supply: () -> (nat) query;
+   icrc7_transfer: (TransferArgs) -> (TransferResponse);
+   mint: (Account__1) -> (SetNFTBatchResponse);
+ };
+type InitArgs__3 = 
+ opt
+  record {
+    allow_transfers: opt bool;
+    burn_account: opt Account;
+    default_take_value: opt nat;
+    deployer: principal;
+    description: opt text;
+    logo: opt text;
+    max_memo_size: opt nat;
+    max_query_batch_size: opt nat;
+    max_take_value: opt nat;
+    max_update_batch_size: opt nat;
+    name: opt text;
+    permitted_drift: opt nat;
+    supply_cap: opt nat;
+    supported_standards: opt SupportedStandards;
+    symbol: opt text;
+  };
+type InitArgs__2 = 
+ record {
+   archiveControllers: opt opt vec principal;
+   archiveCycles: nat;
+   archiveIndexType: IndexType;
+   maxActiveRecords: nat;
+   maxArchivePages: nat;
+   maxRecordsInArchiveInstance: nat;
+   maxRecordsToArchive: nat;
+   settleToRecords: nat;
+ };
+type InitArgs__1 = opt InitArgs__2;
+type InitArgs = 
+ opt
+  record {
+    collection_approval_requires_token: opt bool;
+    deployer: principal;
+    max_approvals: opt nat;
+    max_approvals_per_token_or_collection: opt nat;
+    max_revoke_approvals: opt nat;
+    settle_to_approvals: opt nat;
+  };
+type IndexType = 
+ variant {
+   Managed;
+   Stable;
+   StableTyped;
+ };
+type GetTransactionsResult__1 = 
+ record {
+   archived_blocks: vec ArchivedTransactionResponse;
+   blocks: vec record {
+                 block: Value__2;
+                 id: nat;
+               };
+   log_length: nat;
+ };
+type GetTransactionsResult = 
+ record {
+   archived_blocks: vec ArchivedTransactionResponse;
+   blocks: vec record {
+                 block: Value__2;
+                 id: nat;
+               };
+   log_length: nat;
+ };
+type GetTransactionsFn = func (vec TransactionRange__1) ->
+                          (GetTransactionsResult__1) query;
+type GetArchivesResultItem = 
+ record {
+   canister_id: principal;
+   end: nat;
+   start: nat;
+ };
+type GetArchivesResult = vec GetArchivesResultItem;
+type GetArchivesArgs = record {from: opt principal;};
+type DataCertificate = 
+ record {
+   certificate: blob;
+   hash_tree: blob;
+ };
+type CollectionApproval = 
+ record {
+   created_at_time: opt nat64;
+   expires_at: opt nat64;
+   from_subaccount: opt blob;
+   memo: opt blob;
+   spender: Account__2;
+ };
+type BurnNFTResult = 
+ variant {
+   Err: BurnNFTError;
+   Ok: nat;
+ };
+type BurnNFTItemResponse = 
+ record {
+   result: BurnNFTResult;
+   token_id: nat;
+ };
+type BurnNFTError = 
+ variant {
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   InvalidBurn;
+   NonExistingTokenId;
+ };
+type BurnNFTBatchResponse = 
+ variant {
+   Err: BurnNFTBatchError;
+   Ok: vec BurnNFTItemResponse;
+ };
+type BurnNFTBatchError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   TooOld;
+   Unauthorized;
+ };
+type ArchivedTransactionResponse = 
+ record {
+   args: vec TransactionRange__1;
+   callback: GetTransactionsFn;
+ };
+type ApproveTokensError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   Duplicate: record {duplicate_of: nat;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   NonExistingTokenId;
+   TooOld;
+   Unauthorized;
+ };
+type ApproveTokensBatchError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   TooOld;
+ };
+type ApproveCollectionError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   Duplicate: record {duplicate_of: nat;};
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   TooOld;
+ };
+type ApprovalResult = 
+ variant {
+   Err: ApproveTokensError;
+   Ok: nat;
+ };
+type ApprovalResponseItem = 
+ record {
+   approval_result: ApprovalResult;
+   token_id: nat;
+ };
+type ApprovalResponse = 
+ variant {
+   Err: ApproveTokensBatchError;
+   Ok: vec ApprovalResponseItem;
+ };
+type ApprovalInfo__1 = 
+ record {
+   created_at_time: opt nat64;
+   expires_at: opt nat64;
+   from_subaccount: opt blob;
+   memo: opt blob;
+   spender: Account__2;
+ };
+type ApprovalInfo = 
+ record {
+   created_at_time: opt nat64;
+   expires_at: opt nat64;
+   from_subaccount: opt blob;
+   memo: opt blob;
+   spender: Account__2;
+ };
+type ApprovalCollectionResponse = 
+ variant {
+   Err: ApproveCollectionError;
+   Ok: nat;
+ };
+type Account__3 = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount;
+ };
+type Account__2 = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount;
+ };
+type Account__1 = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount;
+ };
+type Account = 
+ record {
+   owner: principal;
+   subaccount: opt Subaccount;
+ };
+service : (record {
+             icrc30_args: InitArgs;
+             icrc3_args: InitArgs__1;
+             icrc7_args: InitArgs__3;
+           }) -> NFTCanister

@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    // compilation
+    "module": "NodeNext",
+    "target": "ESNext",
+    "lib": ["ESNext"],
+
+    // resolution
+    "moduleResolution": "NodeNext",
+    "moduleDetection": "force",
+
+    // type checking
+    "strict": true,
+    "allowJs": true,
+    "downlevelIteration": true,
+    "skipLibCheck": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "types": ["jest", "node"]
+  },
+  "include": ["./test/**/*.ts"],
+  
+}
