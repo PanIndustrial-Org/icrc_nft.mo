@@ -12,13 +12,9 @@ import ICRC7 "mo:icrc7-mo";
 import ICRC30 "mo:icrc30-mo";
 import ICRC3 "mo:icrc3-mo";
 
-shared (_init_msg) actor class NFTCanister(
-  _args : {
-    icrc7_args : ICRC7.InitArgs;
-    icrc30_args : ICRC30.InitArgs;
-    icrc3_args : ICRC3.InitArgs;
-  }
-) : async (ICRC7.Service and ICRC3.Service and ICRC30.Service) = this {
+import Types "types";
+
+shared (_init_msg) actor class NFTCanister(args : Types.InitArgs) : async (ICRC7.Service and ICRC3.Service and ICRC30.Service) = this {
 
   stable var init_msg = _init_msg; //preserves original initialization;
 
@@ -29,7 +25,7 @@ shared (_init_msg) actor class NFTCanister(
   stable var icrc7_migration_state = ICRC7.init(
     ICRC7.initialState(),
     #v0_1_0(#id),
-    _args.icrc7_args,
+    args.icrc7_args,
     init_msg.caller,
   );
 
@@ -69,7 +65,7 @@ shared (_init_msg) actor class NFTCanister(
   stable var icrc30_migration_state = ICRC30.init(
     ICRC30.initialState(),
     #v0_1_0(#id),
-    _args.icrc30_args,
+    args.icrc30_args,
     init_msg.caller,
   );
 
@@ -111,7 +107,7 @@ shared (_init_msg) actor class NFTCanister(
   stable var icrc3_migration_state = ICRC3.init(
     ICRC3.initialState(),
     #v0_1_0(#id),
-    _args.icrc3_args,
+    args.icrc3_args,
     init_msg.caller,
   );
 
