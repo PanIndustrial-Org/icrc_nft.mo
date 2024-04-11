@@ -376,7 +376,7 @@ shared(_init_msg) actor class Example(_args : {
     //todo: figure this out
     return [
       {name = "ICRC-7"; url = "https://github.com/dfinity/ICRC/ICRCs/ICRC-7"},
-      {name = "ICRC-30"; url = "https://github.com/dfinity/ICRC/ICRCs/ICRC-30"}];
+      {name = "ICRC-37"; url = "https://github.com/dfinity/ICRC/ICRCs/ICRC-37"}];
   };
 
 
