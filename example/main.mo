@@ -422,7 +422,7 @@ shared(_init_msg) actor class Example(_args : {
     return icrc3().get_archives(args);
   };
 
-  public query func icrc3_supported_bloc_types() : async [ICRC3.BlockType] {
+  public query func icrc3_supported_block_types() : async [ICRC3.BlockType] {
     return icrc3().supported_block_types();
   };
 
