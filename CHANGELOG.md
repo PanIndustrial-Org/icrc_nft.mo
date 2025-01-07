@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.5.0
+
+- Updated to the class+ library.
+- Breaking Change: You will need to update your args and class setup functions.
 
 # v0.2.2
 

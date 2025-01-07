@@ -1,4 +1,3 @@
-import Array "mo:base/Array";
 import Buffer "mo:base/Buffer";
 import Vec "mo:vector";
 import Principal "mo:base/Principal";
@@ -16,11 +15,12 @@ import ICRC3 "mo:icrc3-mo";
 import ICRC7Default "./initial_state/icrc7";
 import ICRC37Default "./initial_state/icrc37";
 import ICRC3Default "./initial_state/icrc3";
+import ClassPlus "mo:class-plus";
 
 
 shared(_init_msg) actor class Example(_args : {
-  icrc7_args: ?ICRC7.InitArgs;
-  icrc37_args: ?ICRC37.InitArgs;
+  icrc7_args: ?ICRC7.InitArgList;
+  icrc37_args: ?ICRC37.InitArgList;
   icrc3_args: ICRC3.InitArgs;
 }) = this {
 
@@ -57,55 +57,8 @@ shared(_init_msg) actor class Example(_args : {
 
   stable var init_msg = _init_msg; //preserves original initialization;
 
-  stable var icrc7_migration_state = ICRC7.init(
-    ICRC7.initialState() , 
-    #v0_1_0(#id), 
-    switch(_args.icrc7_args){
-      case(null) ICRC7Default.defaultConfig(init_msg.caller);
-      case(?val) val;
-      }, 
-    init_msg.caller);
+  stable var original_args = _args;
 
-  let #v0_1_0(#data(icrc7_state_current)) = icrc7_migration_state;
-
-  stable var icrc37_migration_state = ICRC37.init(
-    ICRC37.initialState() , 
-    #v0_1_0(#id), 
-    switch(_args.icrc37_args){
-      case(null) ICRC37Default.defaultConfig(init_msg.caller);
-      case(?val) val;
-      }, 
-    init_msg.caller);
-
-  let #v0_1_0(#data(icrc37_state_current)) = icrc37_migration_state;
-
-  stable var icrc3_migration_state = ICRC3.init(
-    ICRC3.initialState() ,
-    #v0_1_0(#id), 
-    switch(_args.icrc3_args){
-      case(null) ICRC3Default.defaultConfig(init_msg.caller);
-      case(?val) ?val : ICRC3.InitArgs;
-      }, 
-    init_msg.caller);
-
-  let #v0_1_0(#data(icrc3_state_current)) = icrc3_migration_state;
-
-  private var _icrc7 : ?ICRC7.ICRC7 = null;
-  private var _icrc37 : ?ICRC37.ICRC37 = null;
-  private var _icrc3 : ?ICRC3.ICRC3 = null;
-
-  private func get_icrc7_state() : ICRC7.CurrentState {
-    return icrc7_state_current;
-  };
-
-  private func get_icrc37_state() : ICRC37.CurrentState {
-    return icrc37_state_current;
-  };
-
-  private func get_icrc3_state() : ICRC3.CurrentState {
-    return icrc3_state_current;
-  };
-  
 
   stable let cert_store : CertTree.Store = CertTree.newStore();
   let ct = CertTree.Ops(cert_store);
@@ -123,6 +76,18 @@ shared(_init_msg) actor class Example(_args : {
     return true;
   };
 
+  let initManager = ClassPlus.ClassPlusInitializationManager(init_msg.caller, Principal.fromActor(this), true);
+
+  stable var icrc3_migration_state = ICRC3.init(
+    ICRC3.initialState() ,
+    #v0_1_0(#id), 
+    switch(_args.icrc3_args){
+      case(null) ICRC3Default.defaultConfig(init_msg.caller);
+      case(?val) ?val : ICRC3.InitArgs;
+      }, 
+    init_msg.caller);
+
+  
   private func get_icrc3_environment() : ICRC3.Environment{
     ?{
       updated_certification = ?updated_certification;
@@ -130,30 +95,21 @@ shared(_init_msg) actor class Example(_args : {
     };
   };
 
+  let #v0_1_0(#data(icrc3_state_current)) = icrc3_migration_state;
+
+  private var _icrc3: ?ICRC3.ICRC3 = null;
+
+  private func get_icrc3_state() : ICRC3.CurrentState {
+    return icrc3_state_current;
+  };
+  
+  
+
   D.print("Initargs: " # debug_show(_args));
 
-  func ensure_block_types(icrc3Class: ICRC3.ICRC3) : () {
-    D.print("in ensure_block_types: ");
-    let supportedBlocks = Buffer.fromIter<ICRC3.BlockType>(icrc3Class.supported_block_types().vals());
+  
 
-    let blockequal = func(a : {block_type: Text}, b : {block_type: Text}) : Bool {
-      a.block_type == b.block_type;
-    };
-
-    for(thisItem in icrc7().supported_blocktypes().vals()){
-      if(Buffer.indexOf<ICRC3.BlockType>({block_type = thisItem.0; url=thisItem.1;}, supportedBlocks, blockequal) == null){
-        supportedBlocks.add({block_type = thisItem.0; url = thisItem.1});
-      };
-    };
-
-    for(thisItem in icrc37().supported_blocktypes().vals()){
-      if(Buffer.indexOf<ICRC3.BlockType>({block_type = thisItem.0; url=thisItem.1;}, supportedBlocks, blockequal) == null){
-        supportedBlocks.add({block_type = thisItem.0; url = thisItem.1});
-      };
-    };
-
-    icrc3Class.update_supported_blocks(Buffer.toArray(supportedBlocks));
-  };
+  
 
   func icrc3() : ICRC3.ICRC3 {
     switch(_icrc3){
@@ -162,7 +118,6 @@ shared(_init_msg) actor class Example(_args : {
         
         D.print("ensure should be done: " # debug_show(initclass.supported_block_types()));
         _icrc3 := ?initclass;
-        ensure_block_types(initclass);
         
         initclass;
       };
@@ -170,11 +125,10 @@ shared(_init_msg) actor class Example(_args : {
     };
   };
 
+  stable var icrc7_migration_state = ICRC7.initialState();
+
   private func get_icrc7_environment() : ICRC7.Environment {
     {
-      canister = get_canister;
-      get_time = get_time;
-      refresh_state = get_icrc7_state;
       add_ledger_transaction = ?icrc3().add_record;
       can_mint = null;
       can_burn = null;
@@ -183,11 +137,38 @@ shared(_init_msg) actor class Example(_args : {
     };
   };
 
+  let icrc7 = ICRC7.Init<system>({
+      manager = initManager;
+      initialState = icrc7_migration_state;
+      args = switch(do?{original_args.icrc7_args!}){
+        case(null) ICRC7Default.defaultConfig(init_msg.caller);
+        case(?val) ?val : ?ICRC7.InitArgList;
+      };
+      pullEnvironment = ?get_icrc7_environment;
+      onInitialize = ?(func(newClass: ICRC7.ICRC7) : async* () {
+        //_icrc7 := ?newClass;
+        D.print("Initializing ICRC7");
+        ignore newClass.update_ledger_info(
+          [
+            #Symbol(do?{original_args.icrc7_args!.symbol!}),
+            #Name(do?{original_args.icrc7_args!.name!}),
+            #Description(do?{original_args.icrc7_args!.description!}),
+            #Logo((do?{original_args.icrc7_args!.logo!})),
+          ]
+        );
+
+        
+        //do any work here necessary for initialization
+      });
+      onStorageChange = func(new_state: ICRC7.State) {
+        icrc7_migration_state := new_state;
+      }
+  });
+
+  stable var icrc37_migration_state = ICRC37.initialState();
+
   private func get_icrc37_environment() : ICRC37.Environment {
     {
-      canister = get_canister;
-      get_time = get_time;
-      refresh_state = get_icrc37_state;
       icrc7 = icrc7();
       can_transfer_from = null;
       can_approve_token = null;
@@ -197,54 +178,25 @@ shared(_init_msg) actor class Example(_args : {
     };
   };
 
-  func icrc7() : ICRC7.ICRC7 {
-    switch(_icrc7){
-      case(null){
-        let initclass : ICRC7.ICRC7 = ICRC7.ICRC7(?icrc7_migration_state, Principal.fromActor(this), get_icrc7_environment());
-        _icrc7 := ?initclass;
-        initclass;
-      };
-      case(?val) val;
-    };
-  };
 
-  func icrc37() : ICRC37.ICRC37 {
-    switch(_icrc37){
-      case(null){
-        let initclass : ICRC37.ICRC37 = ICRC37.ICRC37(?icrc37_migration_state, Principal.fromActor(this), get_icrc37_environment());
-        _icrc37 := ?initclass;
-        initclass;
-      };
-      case(?val) val;
+  let icrc37 = ICRC37.Init<system>({
+    manager = initManager;
+    initialState = icrc37_migration_state;
+    args = switch(do?{original_args.icrc37_args!}){
+      case(null) ICRC37Default.defaultConfig(init_msg.caller);
+      case(?val) ?val : ?ICRC37.InitArgList;
     };
-  };
+    pullEnvironment = ?get_icrc37_environment;
+    onInitialize = ?(func(newClass: ICRC37.ICRC37) : async* () {
+      D.print("Initializing ICRC37");
+      //do any work here necessary for initialization
+    });
+    onStorageChange = func(new_state: ICRC37.State) {
+      icrc37_migration_state := new_state;
+    };
+  });
 
   private var canister_principal : ?Principal = null;
-
-  private func get_canister() : Principal {
-    switch (canister_principal) {
-        case (null) {
-            canister_principal := ?Principal.fromActor(this);
-            Principal.fromActor(this);
-        };
-        case (?val) {
-            val;
-        };
-    };
-  };
-
-  private func get_time() : Int{
-      //note: you may want to implement a testing framework where you can set this time manually
-      /* switch(state_current.testing.time_mode){
-          case(#test){
-              state_current.testing.test_time;
-          };
-          case(#standard){
-               Time.now();
-          };
-      }; */
-    Time.now();
-  };
 
   public query func icrc7_symbol() : async Text {
     return switch(icrc7().get_ledger_info().symbol){
@@ -376,6 +328,7 @@ shared(_init_msg) actor class Example(_args : {
     //todo: figure this out
     return [
       {name = "ICRC-7"; url = "https://github.com/dfinity/ICRC/ICRCs/ICRC-7"},
+      {name = "ICRC-10"; url = "https://github.com/dfinity/ICRC/ICRCs/ICRC-10"},
       {name = "ICRC-37"; url = "https://github.com/dfinity/ICRC/ICRCs/ICRC-37"}];
   };
 
@@ -395,19 +348,19 @@ shared(_init_msg) actor class Example(_args : {
   };
 
   public shared(msg) func icrc7_transfer<system>(args: [TransferArgs]) : async [?TransferResult] {
-      icrc7().transfer(msg.caller, args);
+      icrc7().transfer<system>(msg.caller, args);
   };
 
   public shared(msg) func icrc37_transfer_from<system>(args: [TransferFromArg]) : async [?TransferFromResult] {
-      icrc37().transfer_from(msg.caller, args)
+      icrc37().transfer_from<system>(msg.caller, args)
   };
 
   public shared(msg) func icrc37_revoke_token_approvals<system>(args: [RevokeTokenApprovalArg]) : async [?RevokeTokenApprovalResult] {
-      icrc37().revoke_token_approvals(msg.caller, args);
+      icrc37().revoke_token_approvals<system>(msg.caller, args);
   };
 
   public shared(msg) func icrc37_revoke_collection_approvals(args: [RevokeCollectionApprovalArg]) : async [?RevokeCollectionApprovalResult] {
-      icrc37().revoke_collection_approvals(msg.caller, args);
+      icrc37().revoke_collection_approvals<system>(msg.caller, args);
   };
 
   /////////
@@ -504,6 +457,31 @@ shared(_init_msg) actor class Example(_args : {
       
     };
   };
+
+  func ensure_block_types() : async*() {
+    D.print("in ensure_block_types: ");
+    let supportedBlocks = Buffer.fromIter<ICRC3.BlockType>(icrc3().supported_block_types().vals());
+
+    let blockequal = func(a : {block_type: Text}, b : {block_type: Text}) : Bool {
+      a.block_type == b.block_type;
+    };
+
+    for(thisItem in icrc7().supported_blocktypes().vals()){
+      if(Buffer.indexOf<ICRC3.BlockType>({block_type = thisItem.0; url=thisItem.1;}, supportedBlocks, blockequal) == null){
+        supportedBlocks.add({block_type = thisItem.0; url = thisItem.1});
+      };
+    };
+
+    for(thisItem in icrc37().supported_blocktypes().vals()){
+      if(Buffer.indexOf<ICRC3.BlockType>({block_type = thisItem.0; url=thisItem.1;}, supportedBlocks, blockequal) == null){
+        supportedBlocks.add({block_type = thisItem.0; url = thisItem.1});
+      };
+    };
+
+    icrc3().update_supported_blocks(Buffer.toArray(supportedBlocks));
+  };
+
+  initManager.calls.add(ensure_block_types);
   
 
 };
